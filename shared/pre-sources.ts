@@ -1,4 +1,3 @@
-import process from "node:process"
 import { Interval } from "./consts"
 import { typeSafeObjectFromEntries } from "./type.util"
 import type { OriginSource, Source, SourceID } from "./types"
@@ -55,14 +54,12 @@ export const originSources = {
       },
       "hot-video": {
         title: "热门视频",
-        disable: "cf",
         column: "china",
         type: "hottest",
       },
       "ranking": {
         title: "排行榜",
         column: "china",
-        disable: "cf",
         type: "hottest",
         interval: Time.Common,
       },
@@ -138,8 +135,6 @@ export const originSources = {
     type: "hottest",
     column: "china",
     color: "orange",
-    // cloudflare pages cannot access
-    disable: "cf",
     home: "https://www.kuaishou.com",
   },
   "36kr": {
@@ -832,12 +827,6 @@ export function genSources() {
   })
 
   return typeSafeObjectFromEntries(
-    _.filter(([_, v]) => {
-      if (v.disable === "cf" && process.env.CF_PAGES) {
-        return false
-      } else {
-        return v.disable !== true
-      }
-    }),
+    _.filter(([_, v]) => v.disable !== true),
   )
 }

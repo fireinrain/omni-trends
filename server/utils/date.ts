@@ -21,7 +21,6 @@ export function tranformToUTC(date: string, format?: string, timezone: string = 
   return dayjs.tz(date, format, timezone).valueOf()
 }
 
-// cloudflare 里 dayjs() 结果为 0，不能放在 top
 function words() {
   return [
     {

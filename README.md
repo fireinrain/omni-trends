@@ -4,7 +4,7 @@
 
 实时热点新闻聚合阅读器，汇集全球 100+ 个数据源的热门新闻统一展示。
 
-**在线访问**: https://trends.zzzkkkccc.site/
+**在线访问**: https://news.furina.in/
 
 [Forked from NewsNow](https://github.com/ourongxing/newsnow)，在此基础上扩展了更多数据源、代理支持和 bug 修复。
 
@@ -13,7 +13,6 @@
 - **100+ 个数据源**，覆盖国内媒体、国际媒体、科技、财经
 - **代理支持** — `.env.server` 中配置 `HTTPS_PROXY` 走代理（国内访问国外源必需）
 - **深色/浅色模式** 切换
-- **Cloudflare Tunnel** 子域名直连容器，无需 nginx
 - **PWA 支持** — 可安装为桌面应用
 
 ## 快速开始
@@ -37,6 +36,7 @@ JWT_SECRET=
 INIT_TABLE=true
 ENABLE_CACHE=true
 PRODUCTHUNT_API_TOKEN=
+XHS_COOKIE=
 ```
 
 在 `.env.server` 中额外配置端口和代理（不入 example）：
@@ -50,28 +50,31 @@ HTTP_PROXY=http://127.0.0.1:7897
 
 ## 部署
 
-三端统一部署脚本 `deploy.sh`：
+支持两种部署方式：本地部署与容器部署。
+
+### 本地部署
 
 ```bash
-bash deploy.sh
+pnpm build
+PORT=20193 node --env-file=.env.server dist/output/server/index.mjs
 ```
 
-自动完成：Cloudflare Pages 部署 → Docker 镜像构建 → Oracle 远程服务器部署 → 本地启动。
+### 容器部署
 
-| 环境 | 地址 |
-|------|------|
-| 线上 (Tunnel) | https://trends.zzzkkkccc.site/ |
-| Cloudflare Pages | https://omni-trends.pages.dev/ |
-| Oracle (直连) | http://64.181.252.105/ |
-| 本地 | http://localhost:20193/ |
+```bash
+docker compose -f docker-compose.local.yml up -d --build   # 从源码构建镜像
+docker compose up -d                                        # 拉取已发布镜像
+```
+
+访问 http://localhost:4444/
 
 ## 技术栈
 
 | 层 | 技术 |
 |----|------|
 | 前端 | React 19 + TanStack Router/Query + UnoCSS |
-| 后端 | Nitro (h3) — Node.js / Cloudflare Workers |
-| 数据库 | SQLite (本地) / D1 (Cloudflare) |
+| 后端 | Nitro (h3) — Node.js |
+| 数据库 | SQLite |
 | HTTP | ofetch |
 | 构建 | Vite 7 + pnpm |
 

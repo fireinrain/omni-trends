@@ -221,39 +221,103 @@ zh.json 中这些 key 不需要，fallback 到 `pre-sources.ts` 中的原始 tit
 ```ts
 // 中文模式排序（当前顺序，保持不变）
 export const hottestOrderZh: SourceID[] = [
-  "douyin", "xiaohongshu", "weibo", "zhihu",
-  "bilibili-hot-search", "baidu", "toutiao",
-  "tencent-hot", "hupu", "tieba", "douban", "sina",
-  "kuaishou", "nowcoder", "thepaper", "ifeng",
-  "netease-news", "qq-news", "acfun", "newsmth",
-  "huxiu", "sspai", "juejin", "csdn", "segmentfault",
-  "ngabbs", "coolapk", "pcbeta", "52pojie", "nodeseek",
-  "freebuf", "qqvideo", "iqiyi", "weread", "netease-music",
-  "github", "hackernews", "producthunt",
-  "xueqiu", "stcn",
-  "reddit", "steam",
+  "douyin",
+  "xiaohongshu",
+  "weibo",
+  "zhihu",
+  "bilibili-hot-search",
+  "baidu",
+  "toutiao",
+  "tencent-hot",
+  "hupu",
+  "tieba",
+  "douban",
+  "sina",
+  "kuaishou",
+  "nowcoder",
+  "thepaper",
+  "ifeng",
+  "netease-news",
+  "qq-news",
+  "acfun",
+  "newsmth",
+  "huxiu",
+  "sspai",
+  "juejin",
+  "csdn",
+  "segmentfault",
+  "ngabbs",
+  "coolapk",
+  "pcbeta",
+  "52pojie",
+  "nodeseek",
+  "freebuf",
+  "qqvideo",
+  "iqiyi",
+  "weread",
+  "netease-music",
+  "github",
+  "hackernews",
+  "producthunt",
+  "xueqiu",
+  "stcn",
+  "reddit",
+  "steam",
   "huggingface",
 ]
 
 // 英文模式排序（国际平台优先）
 export const hottestOrderEn: SourceID[] = [
   // International tech & dev
-  "github", "hackernews", "producthunt", "reddit",
+  "github",
+  "hackernews",
+  "producthunt",
+  "reddit",
   // Chinese mega-platforms
-  "weibo", "zhihu", "bilibili-hot-search", "douyin", "xiaohongshu",
+  "weibo",
+  "zhihu",
+  "bilibili-hot-search",
+  "douyin",
+  "xiaohongshu",
   // Tech communities
-  "v2ex", "coolapk", "segmentfault", "huggingface",
-  "sspai", "juejin", "csdn", "ngabbs", "pcbeta", "52pojie", "nodeseek",
-  "huxiu", "freebuf",
+  "v2ex",
+  "coolapk",
+  "segmentfault",
+  "huggingface",
+  "sspai",
+  "juejin",
+  "csdn",
+  "ngabbs",
+  "pcbeta",
+  "52pojie",
+  "nodeseek",
+  "huxiu",
+  "freebuf",
   // Chinese news & content
-  "baidu", "toutiao", "sina", "thepaper", "ifeng",
-  "netease-news", "qq-news", "tencent-hot",
+  "baidu",
+  "toutiao",
+  "sina",
+  "thepaper",
+  "ifeng",
+  "netease-news",
+  "qq-news",
+  "tencent-hot",
   // Social & entertainment
-  "hupu", "tieba", "douban", "acfun", "newsmth",
-  "nowcoder", "kuaishou",
-  "qqvideo", "iqiyi", "weread", "netease-music",
+  "hupu",
+  "tieba",
+  "douban",
+  "acfun",
+  "newsmth",
+  "nowcoder",
+  "kuaishou",
+  "qqvideo",
+  "iqiyi",
+  "weread",
+  "netease-music",
   // Finance
-  "xueqiu", "stcn", "steam",
+  "xueqiu",
+  "stcn",
+  "steam",
 ]
 ```
 
@@ -345,10 +409,10 @@ Header 右侧按钮顺序：`GoTop · Refresh · Github · LangToggle · Menu`
 
 ```tsx
 // menu.tsx
-{isDark ? t("menu.lightMode") : t("menu.darkMode")}
-{t("menu.logout")}
-{t("menu.login")}
-{t("menu.star")}
+{ isDark ? t("menu.lightMode") : t("menu.darkMode") }
+{ t("menu.logout") }
+{ t("menu.login") }
+{ t("menu.star") }
 ```
 
 ### SearchBar
@@ -373,7 +437,7 @@ function groupByColumn(items) {
   // ...
   .sort((m, n) => {
     // 用原始 column key 排序，不用翻译后的文字
-    const mKey = /* m 的 column key */ 
+    const mKey = /* m 的 column key */
     const nKey = /* n 的 column key */
     if (mKey === "tech") return -1
     if (nKey === "tech") return 1

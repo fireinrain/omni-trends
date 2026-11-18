@@ -14,19 +14,15 @@ export default defineSource(async () => {
   const url = `https://gw-c.nowcoder.com/api/sparta/hot-search/top-hot-pc?size=20&_=${timestamp}&t=`
   const res: Res = await myFetch(url)
   return res.data.result
+    .filter(k => k.type === 74 || k.type === 0)
     .map((k) => {
-      let url, id
-      if (k.type === 74) {
-        url = `https://www.nowcoder.com/feed/main/detail/${k.uuid}`
-        id = k.uuid
-      } else if (k.type === 0) {
-        url = `https://www.nowcoder.com/discuss/${k.id}`
-        id = k.id
-      }
+      const isFeed = k.type === 74
       return {
-        id,
+        id: isFeed ? k.uuid : k.id,
         title: k.title,
-        url,
+        url: isFeed
+          ? `https://www.nowcoder.com/feed/main/detail/${k.uuid}`
+          : `https://www.nowcoder.com/discuss/${k.id}`,
       }
     })
 })

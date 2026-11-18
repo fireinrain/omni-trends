@@ -25,24 +25,22 @@ const PROXY_DOMAINS = [
 
 let proxyAgent: any = null
 
-if (!process.env.CF_PAGES) {
-  const proxyUrl = process.env.HTTPS_PROXY
-    || process.env.https_proxy
-    || process.env.HTTP_PROXY
-    || process.env.http_proxy
+const proxyUrl = process.env.HTTPS_PROXY
+  || process.env.https_proxy
+  || process.env.HTTP_PROXY
+  || process.env.http_proxy
 
-  if (proxyUrl) {
-    try {
-      const require = createRequire(import.meta.url)
-      const { ProxyAgent } = require("undici")
-      proxyAgent = new ProxyAgent({
-        uri: proxyUrl,
-        requestTls: { rejectUnauthorized: false },
-      })
-      logger.info(`proxy agent ready: ${proxyUrl}`)
-    } catch (e) {
-      logger.warn("failed to init proxy agent", e)
-    }
+if (proxyUrl) {
+  try {
+    const require = createRequire(import.meta.url)
+    const { ProxyAgent } = require("undici")
+    proxyAgent = new ProxyAgent({
+      uri: proxyUrl,
+      requestTls: { rejectUnauthorized: false },
+    })
+    logger.info(`proxy agent ready: ${proxyUrl}`)
+  } catch (e) {
+    logger.warn("failed to init proxy agent", e)
   }
 }
 
@@ -60,10 +58,10 @@ const baseFetch = $fetch.create({
 })
 
 // 智能代理：国际站点走代理，国内站点直连
-export const myFetch: typeof baseFetch = (url, opts?) => {
+export const myFetch = ((url: Parameters<typeof baseFetch>[0], opts?: any) => {
   const urlStr = typeof url === "string" ? url : url instanceof URL ? url.toString() : ""
   if (needsProxy(urlStr)) {
     return baseFetch(url, { ...opts, dispatcher: proxyAgent } as any)
   }
   return baseFetch(url, opts)
-}
+}) as typeof baseFetch

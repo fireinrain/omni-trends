@@ -75,7 +75,7 @@ export interface Source {
   /**
    * @default false
    */
-  disable?: boolean | "cf"
+  disable?: boolean
   redirect?: SourceID
 }
 

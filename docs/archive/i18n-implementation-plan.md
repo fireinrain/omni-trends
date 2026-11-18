@@ -526,7 +526,7 @@ import { useTranslation } from "react-i18next"
 将第 128 行的 source title 显示改为：
 
 ```tsx
-{sources[id]?.title && <span className={$("text-sm", `color-${sources[id].color} bg-base op-80 bg-op-50! px-1 rounded`)}>{t(`source.title.${id}`, { defaultValue: sources[id].title })}</span>}
+{ sources[id]?.title && <span className={$("text-sm", `color-${sources[id].color} bg-base op-80 bg-op-50! px-1 rounded`)}>{t(`source.title.${id}`, { defaultValue: sources[id].title })}</span> }
 ```
 
 修改 `UpdatedTime` 组件：
@@ -681,32 +681,96 @@ toaster(t("toast.updateAvailable"), {
 
 ```ts
 export const hottestOrderZh: SourceID[] = [
-  "douyin", "xiaohongshu", "weibo", "zhihu",
-  "bilibili-hot-search", "baidu", "toutiao",
-  "tencent-hot", "hupu", "tieba", "douban", "sina",
-  "kuaishou", "nowcoder", "thepaper", "ifeng",
-  "netease-news", "qq-news", "acfun", "newsmth",
-  "huxiu", "sspai", "juejin", "csdn", "segmentfault",
-  "ngabbs", "coolapk", "pcbeta", "52pojie", "nodeseek",
-  "freebuf", "qqvideo", "iqiyi", "weread", "netease-music",
-  "github", "hackernews", "producthunt",
-  "xueqiu", "stcn",
-  "reddit", "steam",
+  "douyin",
+  "xiaohongshu",
+  "weibo",
+  "zhihu",
+  "bilibili-hot-search",
+  "baidu",
+  "toutiao",
+  "tencent-hot",
+  "hupu",
+  "tieba",
+  "douban",
+  "sina",
+  "kuaishou",
+  "nowcoder",
+  "thepaper",
+  "ifeng",
+  "netease-news",
+  "qq-news",
+  "acfun",
+  "newsmth",
+  "huxiu",
+  "sspai",
+  "juejin",
+  "csdn",
+  "segmentfault",
+  "ngabbs",
+  "coolapk",
+  "pcbeta",
+  "52pojie",
+  "nodeseek",
+  "freebuf",
+  "qqvideo",
+  "iqiyi",
+  "weread",
+  "netease-music",
+  "github",
+  "hackernews",
+  "producthunt",
+  "xueqiu",
+  "stcn",
+  "reddit",
+  "steam",
   "huggingface",
 ]
 
 export const hottestOrderEn: SourceID[] = [
-  "github", "hackernews", "producthunt", "reddit",
-  "weibo", "zhihu", "bilibili-hot-search", "douyin", "xiaohongshu",
-  "v2ex", "coolapk", "segmentfault", "huggingface",
-  "sspai", "juejin", "csdn", "ngabbs", "pcbeta", "52pojie", "nodeseek",
-  "huxiu", "freebuf",
-  "baidu", "toutiao", "sina", "thepaper", "ifeng",
-  "netease-news", "qq-news", "tencent-hot",
-  "hupu", "tieba", "douban", "acfun", "newsmth",
-  "nowcoder", "kuaishou",
-  "qqvideo", "iqiyi", "weread", "netease-music",
-  "xueqiu", "stcn", "steam",
+  "github",
+  "hackernews",
+  "producthunt",
+  "reddit",
+  "weibo",
+  "zhihu",
+  "bilibili-hot-search",
+  "douyin",
+  "xiaohongshu",
+  "v2ex",
+  "coolapk",
+  "segmentfault",
+  "huggingface",
+  "sspai",
+  "juejin",
+  "csdn",
+  "ngabbs",
+  "pcbeta",
+  "52pojie",
+  "nodeseek",
+  "huxiu",
+  "freebuf",
+  "baidu",
+  "toutiao",
+  "sina",
+  "thepaper",
+  "ifeng",
+  "netease-news",
+  "qq-news",
+  "tencent-hot",
+  "hupu",
+  "tieba",
+  "douban",
+  "acfun",
+  "newsmth",
+  "nowcoder",
+  "kuaishou",
+  "qqvideo",
+  "iqiyi",
+  "weread",
+  "netease-music",
+  "xueqiu",
+  "stcn",
+  "steam",
 ]
 ```
 
@@ -716,7 +780,7 @@ export const hottestOrderEn: SourceID[] = [
 
 ```tsx
 import { useTranslation } from "react-i18next"
-import { hottestOrderZh, hottestOrderEn } from "@shared/metadata"
+import { hottestOrderEn, hottestOrderZh } from "@shared/metadata"
 ```
 
 在 `Dnd` 函数中，将原来的 `const [items, setItems] = useAtom(currentSourcesAtom)` 拆分：

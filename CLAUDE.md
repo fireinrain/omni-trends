@@ -11,8 +11,8 @@
 | 前端 | React 19 + TypeScript 5.9 + TanStack Router/Query + UnoCSS |
 | 状态 | Jotai (客户端) + TanStack Query (服务端) |
 | 构建 | Vite 7 + SWC |
-| 服务端 | Nitro (h3) — 支持 Node / Cloudflare Workers / Bun |
-| 数据库 | db0 抽象层 → SQLite (本地) / D1 (线上) |
+| 服务端 | Nitro (h3) — Node.js |
+| 数据库 | db0 → SQLite |
 | HTTP | ofetch (封装为 myFetch) |
 | HTML 解析 | Cheerio |
 | 包管理 | pnpm 10 |
@@ -40,7 +40,7 @@ import * as x from "glob:./sources/{*.ts,**/index.ts}"
 | Google News RSS | `news.google.com/rss/search?q=site:xxx.com` | Economist、小红书 |
 | 直接 API | 调数据源 JSON API | Huggingface Papers |
 
-工具函数在 `server/utils/source.ts`：defineRSSHubSource / defineRSSSource / proxySource。
+工具函数在 `server/utils/source.ts`：defineRSSHubSource / defineRSSSource。
 
 ### 自适应缓存
 
@@ -62,7 +62,7 @@ shared/
 server/
   sources/              # 数据源实现（85 个 .ts 文件）
   api/s/index.ts        # 核心接口：GET /api/s?id=xxx
-  utils/source.ts       # defineRSSHubSource / defineRSSSource / proxySource
+  utils/source.ts       # defineRSSHubSource / defineRSSSource
   utils/rss2json.ts     # RSS 解析器
   utils/fetch.ts        # myFetch 封装（含代理支持）
   utils/crypto.ts       # 加密工具
@@ -86,8 +86,7 @@ src/
 | 环境 | 访问地址 | 配置 |
 |------|----------|------|
 | 本地 | `http://localhost:20193/` | 直接启动 |
-| Oracle Docker | `https://trends.zzzkkkccc.site/` | Cloudflare Tunnel → localhost:20229 |
-| Cloudflare Pages | `https://omni-trends.pages.dev/` | CF Pages 直部署 |
+| 容器 | `http://localhost:4444/` | Docker Compose |
 
 ```bash
 pnpm build && PORT=20193 node --env-file=.env.server dist/output/server/index.mjs
@@ -105,6 +104,7 @@ curl -s "http://localhost:20193/api/s?id={source_id}"
 |------|------|------|
 | `PORT` | 否 | 默认 3000，本项目用 20193 |
 | `PRODUCTHUNT_API_TOKEN` | 否 | Product Hunt 数据源 |
+| `XHS_COOKIE` | 否 | 小红书数据源回退方案（移动端接口被限流时回退到 Web 接口所需的登录 Cookie，需含 `web_session`） |
 
 ## 当前工作状态
 
@@ -153,5 +153,4 @@ curl -s "http://localhost:20193/api/s?id={source_id}"
 
 ## 参考文档
 
-- `docs/cloudflare_deployment.md` — Cloudflare Pages 部署指南
 - `docs/archive/` — 历史文档（上游分析、bug 修复记录、部署方案对比）

@@ -17,7 +17,6 @@ export default defineEventHandler(async (event): Promise<SourceResponse> => {
     }
 
     const cacheTable = await getCacheTable()
-    // Date.now() in Cloudflare Worker will not update throughout the entire runtime.
     const now = Date.now()
     let cache: CacheInfo | undefined
     if (cacheTable) {
@@ -52,8 +51,7 @@ export default defineEventHandler(async (event): Promise<SourceResponse> => {
     try {
       const newData = (await getters[id]()).slice(0, 30)
       if (cacheTable && newData.length) {
-        if (event.context.waitUntil) event.context.waitUntil(cacheTable.set(id, newData))
-        else await cacheTable.set(id, newData)
+        await cacheTable.set(id, newData)
       }
       logger.success(`fetch ${id} latest`)
       return {

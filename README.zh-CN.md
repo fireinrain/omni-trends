@@ -4,9 +4,9 @@
 
 实时热点新闻聚合阅读器 — 基于 [NewsNow](https://github.com/ourongxing/newsnow) 二次开发，扩展了更多数据源、代理支持和 bug 修复。
 
-**在线访问**: https://trends.zzzkkkccc.site/
+**在线访问**: https://news.furina.in/
 
-[English](README.md) | [部署到 Cloudflare](docs/cloudflare_deployment.md)
+[English](README.md)
 
 ## 与原版的区别
 
@@ -14,7 +14,6 @@
 - **代理支持** — 在 `.env.server` 配置 `HTTPS_PROXY` 即可访问被墙站点
 - **修复多个失效源** — freebuf（TLS 指纹绕过）、小红书（edith API）等
 - **深色/浅色模式**切换
-- **Cloudflare Tunnel** 子域名直连容器，无需 nginx
 - **PWA 支持** — 可安装为桌面应用
 
 ## 快速开始
@@ -36,6 +35,7 @@ JWT_SECRET=
 INIT_TABLE=true
 ENABLE_CACHE=true
 PRODUCTHUNT_API_TOKEN=
+XHS_COOKIE=
 ```
 
 代理和端口配置见 `.env.server`（实际使用，不入库）：
@@ -47,13 +47,33 @@ HTTP_PROXY=http://127.0.0.1:7897
 
 代理为可选项，但访问国际源（Reddit、HackerNews、BBC、纽约时报等）时必须配置。
 
+## 部署
+
+支持两种部署方式：本地部署与容器部署。
+
+### 本地部署
+
+```bash
+pnpm build
+PORT=20193 node --env-file=.env.server dist/output/server/index.mjs
+```
+
+### 容器部署
+
+```bash
+docker compose -f docker-compose.local.yml up -d --build   # 从源码构建镜像
+docker compose up -d                                        # 拉取已发布镜像
+```
+
+访问 http://localhost:4444/
+
 ## 技术栈
 
 | 层 | 技术 |
 |----|------|
 | 前端 | React 19 + TanStack Router/Query + UnoCSS |
-| 后端 | Nitro (h3) — Node.js / Cloudflare Workers |
-| 数据库 | SQLite（本地）/ D1（Cloudflare） |
+| 后端 | Nitro (h3) — Node.js |
+| 数据库 | SQLite |
 | HTTP | ofetch + undici ProxyAgent |
 | 构建 | Vite 7 + pnpm |
 

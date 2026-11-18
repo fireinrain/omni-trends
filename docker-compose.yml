@@ -16,6 +16,7 @@ services:
       - INIT_TABLE=true
       - ENABLE_CACHE=true
       - PRODUCTHUNT_API_TOKEN=
+      - XHS_COOKIE=
 
 volumes:
   omnitrends_data:

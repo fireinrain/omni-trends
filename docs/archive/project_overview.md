@@ -127,13 +127,13 @@ omni_trends/
 
 ```typescript
 export const originSources = {
-  "weibo": {
+  weibo: {
     name: "微博",
-    type: "hottest",       // hottest | realtime
-    column: "china",       // 国内/国际/科技/财经
+    type: "hottest", // hottest | realtime
+    column: "china", // 国内/国际/科技/财经
     color: "red",
     home: "https://weibo.com",
-    interval: Time.Realtime,  // 2min 刷新间隔
+    interval: Time.Realtime, // 2min 刷新间隔
   },
   // ... 98 个源
 }
@@ -526,8 +526,8 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
       - WATCHTOWER_CLEANUP=true
-      - WATCHTOWER_POLL_INTERVAL=300  # 5分钟检查一次
-      - WATCHTOWER_LABEL_ENABLE=true  # 只监控带标签的容器
+      - WATCHTOWER_POLL_INTERVAL=300 # 5分钟检查一次
+      - WATCHTOWER_LABEL_ENABLE=true # 只监控带标签的容器
 ```
 
 **优点**：

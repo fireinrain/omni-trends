@@ -44,17 +44,8 @@ export class Cache {
     if (!keys.length) return []
     const placeholders = keys.map(() => "?").join(", ")
     const res = await this.db.prepare(`SELECT id, data, updated FROM cache WHERE id IN (${placeholders})`).all(...keys) as any
-    const rows = (res.results ?? res) as CacheRow[]
+    const rows = res as CacheRow[]
 
-    /**
-     * https://developers.cloudflare.com/d1/build-with-d1/d1-client-api/#return-object
-     * cloudflare d1 .all() will return
-     * {
-     *   success: boolean
-     *   meta:
-     *   results:
-     * }
-     */
     if (rows?.length) {
       logger.success(`get entire (...) cache`)
       return rows.map(row => ({

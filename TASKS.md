@@ -7,7 +7,7 @@
 - [ ] **补充单元测试** — 当前仅 `server/utils/date.test.ts` 一个测试文件。建议为核心工具函数补充测试：
   - `server/utils/crypto.ts` — 加密/解密逻辑
   - `server/utils/base64.ts` — 编码逻辑
-  - `server/utils/source.ts` — defineRSSSource / defineRSSHubSource / proxySource
+  - `server/utils/source.ts` — defineRSSSource / defineRSSHubSource
   - `shared/utils.ts` — relativeTime 等工具函数
 - [ ] **补充数据源测试** — 为关键数据源（weibo、zhihu、github 等）编写集成测试，验证抓取逻辑仍有效
 

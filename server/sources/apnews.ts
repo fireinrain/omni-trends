@@ -1,3 +1,3 @@
 export default defineSource({
-  "apnews": defineRSSHubSource("/apnews/topics/apf-topnews"),
+  apnews: defineRSSHubSource("/apnews/topics/apf-topnews"),
 })

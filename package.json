@@ -15,12 +15,9 @@
     "lint": "eslint",
     "presource": "tsx ./scripts/favicon.ts && tsx ./scripts/source.ts",
     "start": "node --env-file .env.server dist/output/server/index.mjs",
-    "preview": "cross-env CF_PAGES=1 npm run build && wrangler pages dev dist/output/public",
-    "deploy": "cross-env CF_PAGES=1 npm run build && wrangler pages deploy dist/output/public",
     "typecheck": "tsc --noEmit -p tsconfig.node.json && tsc --noEmit -p tsconfig.app.json",
     "release": "bumpp",
     "prepare": "simple-git-hooks",
-    "log": "wrangler pages deployment tail --project-name omni_trends",
     "test": "vitest -c vitest.config.ts"
   },
   "dependencies": {
@@ -29,6 +26,7 @@
     "@atlaskit/pragmatic-drag-and-drop-hitbox": "^1.1.0",
     "@formkit/auto-animate": "^0.9.0",
     "@iconify-json/si": "^1.2.17",
+    "@ikenxuan/xhshow-ts": "^1.2.0",
     "@modelcontextprotocol/sdk": "^1.27.1",
     "@tanstack/react-query-devtools": "^5.91.3",
     "@tanstack/react-router": "^1.163.2",
@@ -78,7 +76,6 @@
     "@unocss/rule-utils": "^66.6.2",
     "@vitejs/plugin-react-swc": "^4.2.3",
     "bumpp": "^10.4.1",
-    "cross-env": "^10.1.0",
     "dotenv": "^17.3.1",
     "eslint": "^9.21.0",
     "eslint-plugin-react-dom": "^1.53.1",
@@ -102,8 +99,7 @@
     "vite-plugin-with-nitro": "0.0.3",
     "vitest": "^4.0.18",
     "workbox-build": "^7.4.0",
-    "workbox-window": "^7.4.0",
-    "wrangler": "4.14.1"
+    "workbox-window": "^7.4.0"
   },
   "pnpm": {
     "patchedDependencies": {
@@ -117,8 +113,7 @@
       "better-sqlite3",
       "sharp",
       "simple-git-hooks",
-      "unrs-resolver",
-      "workerd"
+      "unrs-resolver"
     ]
   },
   "resolutions": {
@@ -128,7 +123,8 @@
     "nitropack": "npm:nitro-go@0.0.3",
     "picomatch": "^4.0.3",
     "react": "^19.0.4",
-    "vite": "^7.3.1"
+    "vite": "^7.3.1",
+    "vite-plugin-with-nitro>h3": "1.15.3"
   },
   "simple-git-hooks": {
     "pre-commit": "npx lint-staged"

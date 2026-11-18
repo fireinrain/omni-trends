@@ -6,8 +6,6 @@ const subtle: T = _
 
 export async function md5(s: string) {
   try {
-    // https://developers.cloudflare.com/workers/runtime-apis/web-crypto/
-    // cloudflare worker support md5
     return await myCrypto(s, "MD5")
   } catch {
     return _md5(s)

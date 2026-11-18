@@ -1,7 +1,10 @@
 import { ourongxing } from "@ourongxing/eslint-config"
 
-export default ourongxing({
+/** @type {import("@ourongxing/eslint-config").TypedFlatConfigItem[]} */
+const config = ourongxing({
   type: "app",
   // 貌似不能 ./ 开头，
-  ignores: ["src/routeTree.gen.ts", "imports.app.d.ts", "public/", ".vscode", "**/*.json"],
+  ignores: ["src/routeTree.gen.ts", "imports.app.d.ts", "public/", ".vscode", "docs/", "**/*.json"],
 })
+
+export default config

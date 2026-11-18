@@ -1,3 +1,5 @@
 import { fileURLToPath } from "node:url"
 
-export const projectDir = fileURLToPath(new URL("..", import.meta.url))
+const projectDirURL = new URL("..", import.meta.url)
+
+export const projectDir = fileURLToPath(projectDirURL)
