@@ -1,214 +1,179 @@
 # Contributing to OmniTrends
 
-Thank you for considering contributing to OmniTrends! This document provides guidelines and instructions for contributing to the project.
+Thanks for contributing! This guide covers the common workflow. For architecture details, see [CLAUDE.md](CLAUDE.md). For user-facing documentation, see [README.md](README.md) and [README.zh-CN.md](README.zh-CN.md).
 
-## Adding a New Source
+## Before you start
 
-OmniTrends is built to be easily extensible with new sources. Here's a step-by-step guide on how to add a new source:
+Requirements:
 
-### 1. Create a Feature Branch
-
-Always create a feature branch for your changes:
-
-```bash
-git checkout -b feature-name
-```
-
-For example, to add a Bilibili hot video source:
+- Node.js >= 20
+- pnpm 10 (enable with `corepack enable`)
 
 ```bash
-git checkout -b bilibili-hot-video
+pnpm install
+cp example.env.server .env.server   # optional; fill in only what you need
+pnpm dev                            # http://localhost:5173
 ```
 
-### 2. Register the Source in Configuration
+## Adding a source
 
-Add your new source to the source configuration in `/shared/pre-sources.ts`:
+### 1. Create a branch
 
+```bash
+git checkout -b add-example-source
 ```
-  "bilibili": {
-  name: "哔哩哔哩",
+
+### 2. Register the source
+
+Add an entry to `originSources` in `shared/pre-sources.ts`:
+
+```ts
+"example": {
+  name: "Example",
+  type: "realtime",        // or "hottest"
+  column: "tech",           // china / world / tech / finance
   color: "blue",
-  home: "https://www.bilibili.com",
-  sub: {
-    "hot-search": {
-      title: "热搜",
-      column: "china",
-      type: "hottest"
-    },
-    "hot-video": {  // Add your new sub-source here
-      title: "热门视频",
-      column: "china",
-      type: "hottest"
-    }
-  }
-}
+  interval: 10 * 60 * 1000,
+  home: "https://example.com",
+  desc: "Example source",
+},
 ```
 
-For a completely new source, add a new top-level entry:
+Useful fields:
 
-```
-"newsource": {
-  name: "New Source",
-  color: "blue",
-  home: "https://www.example.com",
-  column: "tech", // Pick an appropriate column
-  type: "hottest" // Or "realtime" if it's a news feed
-};
-```
+| Field | Description |
+|-------|-------------|
+| `name` | Display name |
+| `title` | Optional subtitle such as "Trending" or "Flash" |
+| `type` | `hottest` or `realtime`; decides the fixed column |
+| `column` | `china` / `world` / `tech` / `finance` |
+| `color` | UnoCSS color name |
+| `interval` | Fetch interval in milliseconds |
+| `home` | Site home page |
+| `desc` | Tooltip description |
+| `sub` | Sub-source definitions |
+| `disable` | Set `true` to disable the source |
 
-### 3. Implement the Source Fetcher
+### 3. Implement the getter
 
-Create or modify a file in the `/server/sources/` directory. If your source is related to an existing one (like adding a new Bilibili sub-source), modify the existing file:
+Create a file under `server/sources/` with the same ID:
 
-```typescript
-// In /server/sources/bilibili.ts
+```ts
+import type { NewsItem } from "@shared/types"
 
-// Define interface for API response
-interface HotVideoRes {
-  code: number
-  message: string
-  ttl: number
-  data: {
-    list: {
-      aid: number
-      // ... other fields
-      bvid: string
-      title: string
-      pubdate: number
-      desc: string
-      pic: string
-      owner: {
-        mid: number
-        name: string
-        face: string
-      }
-      stat: {
-        view: number
-        like: number
-        reply: number
-        // ... other stats
-      }
-    }[]
-  }
-}
-
-// Define source getter function
-const hotVideo = defineSource(async () => {
-  const url = "https://api.bilibili.com/x/web-interface/popular"
-  const res: HotVideoRes = await myFetch(url)
-
-  return res.data.list.map(video => ({
-    id: video.bvid,
-    title: video.title,
-    url: `https://www.bilibili.com/video/${video.bvid}`,
-    pubDate: video.pubdate * 1000,
-    extra: {
-      info: `${video.owner.name} · ${formatNumber(video.stat.view)}观看 · ${formatNumber(video.stat.like)}点赞`,
-      hover: video.desc,
-      icon: video.pic,
-    },
-  }))
+export default defineSource(async () => {
+  const html = await myFetch("https://example.com", { responseType: "text" }) as string
+  // Parse with cheerio or a JSON API
+  return [] as NewsItem[]
 })
+```
 
-// Helper function for formatting numbers
-function formatNumber(num: number): string {
-  if (num >= 10000) {
-    return `${Math.floor(num / 10000)}w+`
-  }
-  return num.toString()
-}
+For an RSS or Atom feed:
 
-// Export the source
+```ts
+export default defineRSSSource("https://example.com/feed.xml")
+```
+
+For RSSHub:
+
+```ts
+export default defineRSSHubSource("/example/topic")
+```
+
+For sub-sources, export an object map:
+
+```ts
 export default defineSource({
-  "bilibili": hotSearch,
-  "bilibili-hot-search": hotSearch,
-  "bilibili-hot-video": hotVideo, // Add your new source here
+  "example": hot,
+  "example-sub": sub,
 })
 ```
 
-For completely new sources, create a new file in `/server/sources/` named after your source (e.g., `newsource.ts`).
+Each item must include a unique `id`, `title`, and `url`. Optional fields include `mobileUrl`, `pubDate`, and `extra`.
 
-### 4. Regenerate Source Files
-
-After adding or modifying source files, run the following command to regenerate the necessary files:
+### 4. Regenerate generated files
 
 ```bash
-pnpm run presource
+pnpm gen:sources     # shared/sources.json and shared/pinyin.json
+pnpm gen:icons       # download missing icons for new sources
+pnpm dev
 ```
 
-This will update the `sources.json` file and any other necessary configuration.
-
-### 5. Test Your Changes
-
-Build and start the server to test your changes:
+### 5. Test the source
 
 ```bash
+curl "http://localhost:5173/api/s?id=example&latest"
+```
+
+In production mode use the server port:
+
+```bash
+curl "http://localhost:20193/api/s?id=example&latest"
+```
+
+Then run the quality checks:
+
+```bash
+pnpm lint
+pnpm typecheck
+pnpm test --run
 pnpm build
-PORT=20193 node --env-file=.env.server dist/output/server/index.mjs
 ```
 
-> [!Warning]
-> `pnpm dev` has known compatibility issues. Always use `pnpm build` + `node --env-file=.env.server dist/output/server/index.mjs`.
-
-Access the application in your browser and ensure that your new source is appearing and working correctly.
-
-You can also test a single source directly:
-
-```bash
-curl "http://localhost:20193/api/s?id={source_id}&latest"
-```
-
-### 6. Commit Your Changes
-
-Once everything is working, commit your changes:
+### 6. Commit
 
 ```bash
 git add .
-git commit -m "Add new source: source-name"
+git commit -m "feat: add example source"
 ```
 
-### 7. Create a Pull Request
+Include `server/glob.d.ts` if it changed. It is generated during the Vite/Nitro build but tracked in Git.
 
-Push your changes to your fork and create a pull request against the main repository:
+## Source implementation notes
 
-```bash
-git push origin feature-name
+- All fetching happens on the server. Do not call third-party APIs directly from the browser.
+- Use `responseType: "text"` for XML/RSS content and parse it with `rss2json.ts`.
+- If an international site needs a proxy, add its domain to `PROXY_DOMAINS` in `server/utils/fetch.ts`.
+- Icons resolve to `public/icons/{id.split("-")[0]}.png`. Run `pnpm gen:icons` after adding a source.
+- Prefer returning cached data on fetch failure rather than silently returning an empty array.
+- Some sites use TLS fingerprint checks; freebuf uses `node:https` for this reason.
+- Do not add npm scripts named `source` or `imports`; they can conflict with npm `pre`/`post` lifecycle hooks.
+
+### The unimport/mlly caveat
+
+Keep Jotai write atoms in `src/atoms/index.ts` multiline:
+
+```ts
+export const exampleAtom = atom(
+  null,
+  (get, set, value: string) => {
+    // ...
+  },
+)
 ```
 
-## Source Structure
+A single-line write atom can make `mlly` treat `set` or other parameters as exports, producing a runtime error such as:
 
-### NewsItem Structure
-
-Each source should return an array of objects that conform to the `NewsItem` interface:
-
-```typescript
-interface NewsItem {
-  id: string | number // Unique identifier for the item
-  title: string // Title of the news item
-  url: string // URL to the full content
-  mobileUrl?: string // Optional mobile-specific URL
-  pubDate?: number | string // Publication date
-  extra?: {
-    hover?: string // Text to display on hover
-    date?: number | string // Formatted date
-    info?: false | string // Additional information
-    diff?: number // Time difference
-    icon?:
-      | false
-      | string
-      | {
-        // Icon for the item
-        url: string
-        scale: number
-      }
-  }
-}
+```text
+does not provide an export named 'set'
 ```
 
-## Code Style
+## Code style
 
-Please follow the existing code style in the project. The project uses TypeScript and follows modern ES6+ conventions.
+- Follow the existing TypeScript/React style.
+- Run `pnpm lint` before committing. ESLint runs automatically through lint-staged on commit.
+- Keep comments concise and explain non-obvious workarounds.
+
+## Reporting bugs
+
+When reporting a source failure, include:
+
+- source ID
+- request URL, e.g. `/api/s?id=example&latest`
+- response status or error message
+- whether a proxy is configured
+- approximate time of the failure
 
 ## License
 
-By contributing to this project, you agree that your contributions will be licensed under the project's license.
+By contributing, you agree that your contributions are licensed under the project's [AGPL-3.0](./LICENSE) license.

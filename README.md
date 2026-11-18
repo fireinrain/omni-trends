@@ -2,122 +2,484 @@
 
 ![](/public/logo.png)
 
-实时热点新闻聚合阅读器，汇集全球 100+ 个数据源的热门新闻统一展示。
+A real-time trending-news aggregator that brings more than 100 sources together in one place, with card and waterfall reading modes.
 
-**在线访问**: https://news.furina.in/
+**Live demo**: https://news.furina.in/<br>
+**中文文档**: [README.zh-CN.md](README.zh-CN.md)<br>
+**Releases**: [GitHub Releases](https://github.com/fireinrain/omni-trends/releases)
 
-[Forked from NewsNow](https://github.com/ourongxing/newsnow)，在此基础上扩展了更多数据源、代理支持和 bug 修复。
+> Forked from [NewsNow](https://github.com/ourongxing/newsnow), with additional sources, proxy support, view modes, and source fixes.
 
-## 特性
+## Features
 
-- **100+ 个数据源**，覆盖国内媒体、国际媒体、科技、财经
-- **代理支持** — `.env.server` 中配置 `HTTPS_PROXY` 走代理（国内访问国外源必需）
-- **信息瀑布流模式** — 在卡片视图外提供基于时间线、按来源混排的热点信息流
-- **深色/浅色模式** 切换
-- **PWA 支持** — 可安装为桌面应用
+- **100+ sources** across China, world, tech, and finance, including 49 "hottest" sources and 24 "realtime" sources.
+- **Two reading modes**: cards for source-by-source browsing, waterfall for a mixed timeline.
+- **Source customization**: choose which sources appear in the Hottest and Realtime columns.
+- **Focus and search**: star favorite sources, then search all sources by name, subtitle, or pinyin.
+- **Drag-and-drop ordering**: reorder cards and keep the order across refreshes.
+- **Responsive layout**: multi-column desktop grid, horizontal swiping on mobile, 1–3 waterfall columns.
+- **Proxy support**: route selected international sources through `HTTPS_PROXY` / `HTTP_PROXY`.
+- **Local cache**: SQLite-backed caching reduces repeated fetches and speeds up first render.
+- **Dark/light mode**, **Chinese/English UI**, and **PWA installation**.
 
-## 快速开始
+## Interface
 
-```bash
-pnpm install
-pnpm build
-PORT=20193 node --env-file=.env.server dist/output/server/index.mjs
-```
+### Top navigation
 
-访问 http://localhost:20193/
+The order is fixed as **Hottest / Realtime / Focus / More**:
 
-## 配置
+| Entry | Description |
+|-------|-------------|
+| Hottest | Aggregates trending lists; sources can be customized |
+| Realtime | Aggregates news flashes and timeline content; sources can be customized |
+| Focus | Sources starred by the user |
+| More | Opens the source search panel with all sources grouped by category |
 
-复制 `example.env.server` 为 `.env.server`：
+The home page shows **Focus** when it has sources; otherwise it shows **Hottest**.
 
-```env
-G_CLIENT_ID=
-G_CLIENT_SECRET=
-JWT_SECRET=
-INIT_TABLE=true
-ENABLE_CACHE=true
-PRODUCTHUNT_API_TOKEN=
-XHS_COOKIE=
-```
+### Card mode
 
-在 `.env.server` 中额外配置端口和代理（不入 example）：
-```env
-PORT=20193
-HTTPS_PROXY=http://127.0.0.1:7897
-HTTP_PROXY=http://127.0.0.1:7897
-```
+- One card per source, responsive grid on desktop and horizontal scrolling on mobile.
+- Each card supports refresh, starring, and drag-and-drop reordering.
+- Card order is stored in browser localStorage; hidden sources keep their original positions.
+- Trending sources show rank changes.
 
-代理可选，但访问国际源（Reddit、HackerNews、BBC 等）需要。
+### Waterfall mode
 
-## 部署
+Switch modes with the button in the header:
 
-支持两种部署方式：本地部署与容器部署。
+- Merges every **visible** source in the current column and deduplicates by URL.
+- **Mixed**: groups items into 30-minute buckets, then interleaves sources inside each bucket for a timeline-like but mixed feed.
+- **Timeline**: strict reverse chronological order.
+- Automatically switches between 1 / 2 / 3 columns, loads 30 items per page, and loads more near the bottom.
+- Shares the same source selection as card mode, so switching modes does not change the visible range.
+- Shows a notice when some sources fail to load.
 
-### 本地部署
+### Source customization
 
-```bash
-pnpm build
-PORT=20193 node --env-file=.env.server dist/output/server/index.mjs
-```
+In the Hottest or Realtime column, click the sliders icon in the header to:
 
-### 容器部署
+- select or deselect sources;
+- select all or clear all;
+- see the selected count.
 
-```bash
-docker compose -f docker-compose.local.yml up -d --build   # 从源码构建镜像
-docker compose up -d                                        # 拉取已发布镜像
-```
+The selection is stored in localStorage under `omni.hiddenSources` and shared by both card and waterfall modes. Because hidden sources are stored, newly added sources are visible by default.
 
-访问 http://localhost:4444/
+### Search and focus
 
-## 技术栈
+- Click **More** or press `Ctrl/Cmd + K` to open the search panel.
+- Search by source name, subtitle, or pinyin.
+- On desktop, the selected source is previewed in a card on the right.
+- Click the star to add or remove a source from Focus.
 
-| 层 | 技术 |
-|----|------|
-| 前端 | React 19 + TanStack Router/Query + UnoCSS |
-| 后端 | Nitro (h3) — Node.js |
-| 数据库 | SQLite |
-| HTTP | ofetch |
-| 构建 | Vite 7 + pnpm |
+## Data sources
 
-## 开发
+The project currently registers **107 source IDs** (including sub-sources), implemented under `server/sources/`. Source metadata lives in `shared/pre-sources.ts`; the runtime registry is generated by `pnpm gen:sources`.
 
-> 需要 Node.js >= 20
+### Categories
+
+| Category | Representative sources |
+|----------|------------------------|
+| China | Weibo, Zhihu, Douyin, Xiaohongshu, Bilibili, Baidu, Toutiao, Tieba, Douban |
+| World | BBC, The Guardian, The New York Times, WSJ, NHK, Lianhe Zaobao, China Digital Times |
+| Tech | GitHub, Hacker News, Product Hunt, 36Kr, SSPAI, Juejin, PCbeta, Coolapk |
+| Finance | CLS, Xueqiu, Wallstreetcn, Securities Times, TechFlow, Gelonghui |
+| Communities | V2EX, NGA, NodeSeek, 52pojie, NewSMTH, Linux.do (some sources are unavailable) |
+
+### Fetch strategies
+
+All fetching happens on the server:
+
+| Strategy | Description | Examples |
+|----------|-------------|----------|
+| HTML/API parsing | Fetch with `myFetch`, then parse with Cheerio or JSON | Weibo, Zhihu, Bilibili, CLS |
+| RSS / Atom | Parse official feeds with `defineRSSSource` | BBC, The Guardian, OSChina, SegmentFault |
+| RSSHub | Fetch through RSSHub with `defineRSSHubSource` | AP News, Washington Post |
+| Google News RSS | Fall back to `news.google.com/rss/search` | Economist, YouTube |
+| Direct API | Call a public JSON API | Product Hunt, Hugging Face Papers |
+| Reader fallback | Use Jina Reader when Cloudflare blocks the official feed | China Digital Times |
+
+### Fetching and caching
+
+- `myFetch` in `server/utils/fetch.ts` sets a User-Agent, a 10-second timeout, and 3 retries.
+- International domains go through the proxy allowlist; domestic domains connect directly. The list is `PROXY_DOMAINS` in `server/utils/fetch.ts`.
+- `/api/s` returns at most 30 items per source.
+- Each source has an `interval`; requests within the interval return the cache immediately.
+- The global `TTL` is 30 minutes. `?latest` bypasses TTL, but not `interval`.
+- If a fetch fails and an older cache exists, the cached response is returned.
+
+### Source health
+
+The following sources have been fixed for their current site structure and normally work:
+
+- **CLS**: signed requests to the official API.
+- **PCbeta**: handles the forum's environment and slider challenge cookies.
+- **Lianhe Zaobao**: parses the official world-news section.
+- **TechFlow**: official RSS.
+- **OSChina**: official RSS.
+- **SegmentFault**: official Atom feed.
+- **Securities Times**: official flash-news JSON API.
+- **China Digital Times**: official RSS first, Jina Reader fallback on Cloudflare `403`.
+
+Known limitations:
+
+- `server/sources/weibo.ts` contains a hardcoded Weibo cookie that may expire at any time.
+- Xiaohongshu's mobile endpoint is intermittently rate-limited; set `XHS_COOKIE` to enable the web fallback.
+- freebuf uses TLS fingerprint detection and must use `node:https` instead of ofetch/undici.
+- China Digital Times uses Cloudflare verification; the fallback depends on Jina Reader being available.
+- Some sources are explicitly disabled with `disable: true`, including smzdm, MKTNews, Fastbull, JianShu, and Linux.do.
+
+## Quick start
+
+> Requires Node.js >= 20 and pnpm 10 (corepack recommended).
 
 ```bash
 corepack enable
 pnpm install
-pnpm dev          # http://localhost:5173
+cp example.env.server .env.server
+pnpm dev
 ```
 
-常用命令：
+Development server: http://localhost:5173/
 
-```bash
-pnpm build        # 生产构建
-pnpm test --run   # 单元测试
-pnpm typecheck    # 类型检查（自动生成 sources.json 与类型声明）
-pnpm lint         # ESLint
-```
+The frontend and `/api` are served by the same Vite/Nitro instance.
 
-生产运行：
+`.env.server` can stay empty. It is only needed for Product Hunt, the Xiaohongshu fallback, or a proxy.
+
+### Production build
 
 ```bash
 pnpm build
 PORT=20193 node --env-file=.env.server dist/output/server/index.mjs
 ```
 
-### 添加数据源
+Open http://localhost:20193/.
 
-1. 在 `shared/pre-sources.ts` 定义元信息
-2. 在 `server/sources/{name}.ts` 创建 getter
-3. 重新构建测试：`curl http://localhost:20193/api/s?id={name}&latest`
+You can also use:
 
-> `shared/sources.json` 和 `shared/pinyin.json` 是生成文件（已 gitignore），由 `pnpm build` / `pnpm dev` / `pnpm typecheck`
-> 自动生成。
+```bash
+PORT=20193 pnpm start
+```
 
-## 致谢
+`pnpm start` reads `.env.server`, so the file must exist.
 
-Forked from [NewsNow](https://github.com/ourongxing/newsnow) by [ourongxing](https://github.com/ourongxing)。原项目 MIT 协议。
+## Configuration
 
-## 协议
+Copy `example.env.server` to `.env.server` and fill in what you need:
 
-[MIT](./LICENSE)
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `PORT` | No | Server port, default 3000; examples use 20193 |
+| `ENABLE_CACHE` | No | Enable SQLite caching, enabled by default; set `false` to disable |
+| `INIT_TABLE` | No | Initialize the cache table on startup, enabled by default; set `false` to skip |
+| `PRODUCTHUNT_API_TOKEN` | No | Product Hunt token; the source fails without it |
+| `XHS_COOKIE` | No | Xiaohongshu web fallback cookie; must contain `web_session` |
+| `HTTPS_PROXY` | No | HTTPS proxy, e.g. `http://127.0.0.1:7897` |
+| `HTTP_PROXY` | No | HTTP proxy, usually the same as `HTTPS_PROXY` |
+
+> `G_CLIENT_ID`, `G_CLIENT_SECRET`, and `JWT_SECRET` in `example.env.server` are legacy OAuth placeholders. The current code no longer reads them, so they can stay empty.
+
+### Proxy behavior
+
+The proxy only applies to domains matching `PROXY_DOMAINS` in `server/utils/fetch.ts`, such as Reddit, Hacker News, BBC, The New York Times, WSJ, Product Hunt, and China Digital Times. Domestic sources still connect directly.
+
+If a new international source needs the proxy, add its domain to `PROXY_DOMAINS` and restart the server.
+
+## Deployment
+
+### Local deployment
+
+```bash
+pnpm install
+pnpm build
+PORT=20193 node --env-file=.env.server dist/output/server/index.mjs
+```
+
+### Docker Compose: build from source
+
+```bash
+docker compose -f docker-compose.local.yml up -d --build
+```
+
+Open http://localhost:4444/.
+
+### Docker Compose: published image
+
+```bash
+docker compose up -d
+```
+
+The default image is `ghcr.io/fireinrain/omni-trends:main`. Open http://localhost:4444/.
+
+Cache data is stored in the Docker volume `omnitrends_data`, mounted at `/usr/app/.data` inside the container.
+
+### CI image
+
+`.github/workflows/docker.yml` builds and pushes `linux/amd64` and `linux/arm64` images to GHCR when `main` or a `v*` tag is pushed.
+
+## Development
+
+### Commands
+
+| Command | Description |
+|---------|-------------|
+| `pnpm dev` | Start the dev server (generates sources automatically) |
+| `pnpm build` | Production build |
+| `pnpm start` | Run the build output using `.env.server` |
+| `pnpm test --run` | Run all unit tests |
+| `pnpm lint` | Run ESLint |
+| `pnpm typecheck` | Generate sources/imports, then run TypeScript checks |
+| `pnpm gen:sources` | Generate `shared/sources.json` and `shared/pinyin.json` |
+| `pnpm gen:imports` | Generate auto-import types in `imports.app.d.ts` |
+| `pnpm gen:icons` | Download missing icons for new sources only |
+| `pnpm release` | Release with bumpp |
+
+`pnpm dev` and `pnpm build` run `gen:sources` automatically through `presource`.
+
+### Generated files
+
+| File | Generated by | Committed |
+|------|--------------|-----------|
+| `shared/sources.json` | `pnpm gen:sources` | No |
+| `shared/pinyin.json` | `pnpm gen:sources` | No |
+| `imports.app.d.ts` | `pnpm gen:imports` | No |
+| `server/glob.d.ts` | Rollup Glob plugin during Vite/Nitro build | Yes; commit changes |
+| `public/icons/*.png` | `pnpm gen:icons` | Yes |
+
+After editing `shared/pre-sources.ts`, run `pnpm gen:sources`. After adding a source, run `pnpm gen:icons` as well.
+
+### Project structure
+
+```text
+shared/                 # Shared definitions
+  pre-sources.ts        # Source metadata
+  sources.ts            # Reads the generated sources.json
+  metadata.ts           # Columns and hottest ordering
+  types.ts              # NewsItem, Source, SourceResponse, etc.
+  consts.ts             # TTL, Interval, version information
+
+server/
+  api/                  # Nitro API
+    s/index.ts          # GET /api/s
+    s/entire.post.ts    # POST /api/s/entire
+    latest.ts           # GET /api/latest
+    mcp.post.ts         # POST /api/mcp
+  sources/              # Source getters
+  getters.ts            # Glob-based source registration
+  database/cache.ts     # SQLite cache
+  mcp/                  # MCP server
+  utils/                # fetch, RSS, date, crypto, logger utilities
+
+src/
+  atoms/                # Jotai state
+  components/
+    column/             # Card view and drag-and-drop ordering
+    waterfall/          # Waterfall view
+    header/             # Header, view toggle, source filter
+    common/             # Search, drag-and-drop, scrollbars, toast
+  hooks/                # Query, refresh, focus, PWA hooks
+  routes/               # TanStack Router routes
+  locales/              # Chinese/English copy
+
+scripts/                # Source, imports, and icon generators
+tools/                  # unimport and Rollup Glob helpers
+docs/archive/           # Historical documents only
+```
+
+## Adding a source
+
+### 1. Define metadata
+
+Add an entry to `originSources` in `shared/pre-sources.ts`:
+
+```ts
+"example": {
+  name: "Example",
+  type: "realtime",        // or "hottest"
+  column: "tech",           // china / world / tech / finance
+  color: "blue",
+  interval: 10 * 60 * 1000,
+  home: "https://example.com",
+  desc: "Example source",
+},
+```
+
+Common fields:
+
+| Field | Description |
+|-------|-------------|
+| `name` | Display name |
+| `title` | Card subtitle, e.g. "Trending" or "Flash" |
+| `type` | `hottest` or `realtime`; decides the fixed column |
+| `column` | `china` / `world` / `tech` / `finance` |
+| `color` | UnoCSS color name such as `blue`, `red`, `green` |
+| `interval` | Fetch interval in milliseconds |
+| `home` | Site home page |
+| `desc` | Description shown in card tooltips |
+| `sub` | Sub-source definitions such as `bilibili-hot-search` |
+| `disable` | Set to `true` to disable the source temporarily |
+
+### 2. Implement the getter
+
+Create a file with the same name under `server/sources/` and export a default getter:
+
+```ts
+import type { NewsItem } from "@shared/types"
+
+export default defineSource(async () => {
+  const html = await myFetch("https://example.com", { responseType: "text" }) as string
+  // Parse with cheerio or a JSON API
+  return [] as NewsItem[]
+})
+```
+
+For RSS:
+
+```ts
+export default defineRSSSource("https://example.com/feed.xml")
+```
+
+For RSSHub:
+
+```ts
+export default defineRSSHubSource("/example/topic")
+```
+
+For sub-sources, export an object map:
+
+```ts
+export default defineSource({
+  "example": hot,
+  "example-sub": sub,
+})
+```
+
+Every item must contain a unique `id`, `title`, and `url`; `mobileUrl`, `pubDate`, and `extra` are optional.
+
+### 3. Generate and test
+
+```bash
+pnpm gen:sources
+pnpm gen:icons
+pnpm dev
+```
+
+Test a single source:
+
+```bash
+curl "http://localhost:5173/api/s?id=example&latest"
+```
+
+In production use the matching port:
+
+```bash
+curl "http://localhost:20193/api/s?id=example&latest"
+```
+
+Finally run:
+
+```bash
+pnpm lint
+pnpm typecheck
+pnpm test --run
+pnpm build
+```
+
+### 4. Notes
+
+- Use `responseType: "text"` for XML/RSS to avoid ofetch XML parsing issues.
+- If the site needs a proxy, add its domain to `PROXY_DOMAINS` in `server/utils/fetch.ts`.
+- Icons resolve to `public/icons/{id.split("-")[0]}.png`; run `pnpm gen:icons` after adding a source.
+- `server/glob.d.ts` is a generated type declaration that is committed; include it when adding a source.
+- Do not add npm scripts named `source` or `imports`; they can trigger npm `pre`/`post` lifecycle hooks.
+
+## API and cache
+
+### API endpoints
+
+| Endpoint | Description |
+|----------|-------------|
+| `GET /api/s?id={sourceID}` | Get one source, preferring cache |
+| `GET /api/s?id={sourceID}&latest` | Bypass TTL and try to fetch fresh data |
+| `POST /api/s/entire` | Read cached data in bulk; body `{ "sources": ["weibo", "zhihu"] }` |
+| `GET /api/latest` | Return the server version as `{ "v": "0.0.39" }` |
+| `POST /api/mcp` | MCP Streamable HTTP endpoint exposing `get_hotest_latest_news` |
+
+### Cache behavior
+
+- Cache lives in `.data/db.sqlite3`, table `cache`, with columns `id`, `updated`, and `data`.
+- Within `interval`, the cache is returned even when `?latest` is present.
+- After `interval` but within the 30-minute TTL, normal requests return cache while `?latest` fetches fresh data.
+- If fetching fails and an older cache exists, the old cache is returned with status `cache`.
+
+Delete one source's cache:
+
+```bash
+sqlite3 .data/db.sqlite3 "DELETE FROM cache WHERE id='weibo';"
+```
+
+## Troubleshooting
+
+### Blank page with `does not provide an export named 'set'`
+
+This is an `mlly` parsing issue used by `unimport`. A single-line write atom such as:
+
+```ts
+export const toggleSourceVisibilityAtom = atom(null, (get, set, source: SourceID) => {
+```
+
+is misread as exporting `set`, which generates an invalid auto-import. Keep write atoms in `src/atoms/index.ts` multiline:
+
+```ts
+export const toggleSourceVisibilityAtom = atom(
+  null,
+  (get, set, source: SourceID) => {
+    // ...
+  },
+)
+```
+
+After changing them, run `pnpm gen:imports` and restart `pnpm dev`.
+
+### Source returns 403 or times out
+
+- International sites: check `HTTPS_PROXY` / `HTTP_PROXY` in `.env.server`, and make sure the domain is in `PROXY_DOMAINS`.
+- Domestic sites: check local network access; some sites apply rate limits or human verification.
+- China Digital Times: the official RSS may be blocked by Cloudflare; the project falls back to Jina Reader.
+- Other sources: test the endpoint with `curl` first, then adjust the parsing logic.
+
+### Missing generated files
+
+```bash
+pnpm gen:sources
+pnpm gen:imports
+```
+
+### Missing icons
+
+```bash
+pnpm gen:icons
+```
+
+### Port already in use
+
+```bash
+PORT=20194 pnpm dev
+```
+
+## Documentation
+
+- [中文 README](README.zh-CN.md)
+- [Contributing guide](CONTRIBUTING.md)
+- [CLAUDE.md](CLAUDE.md) — architecture and maintenance notes for developers
+- [TASKS.md](TASKS.md) — pending improvements
+- [docs/review_mimo.md](docs/review_mimo.md) — historical code review; some findings are outdated
+- [docs/archive/](docs/archive/) — historical documents only; they do not describe the current implementation
+
+## Credits
+
+Forked from [NewsNow](https://github.com/ourongxing/newsnow) by [ourongxing](https://github.com/ourongxing). The upstream project is MIT licensed.
+
+## License
+
+This project is licensed under [AGPL-3.0](./LICENSE).
