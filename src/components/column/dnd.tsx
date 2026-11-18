@@ -10,7 +10,7 @@ import { motion } from "framer-motion"
 import { useWindowSize } from "react-use"
 import { isMobile } from "react-device-detect"
 import { useTranslation } from "react-i18next"
-import { hottestOrderEn, hottestOrderZh } from "@shared/metadata"
+import { hottestOrderEn, hottestOrderZh, metadata } from "@shared/metadata"
 import { DndContext } from "../common/dnd"
 import { useSortable } from "../common/dnd/useSortable"
 import { OverlayScrollbar } from "../common/overlay-scrollbar"
@@ -26,15 +26,38 @@ export function Dnd() {
   const [parent] = useAutoAnimate({ duration: AnimationDuration })
   const { i18n, t } = useTranslation()
 
-  const items = useMemo(() => {
-    if (currentColumnID !== "hottest") return rawItems
-    const order = i18n.language === "en" ? hottestOrderEn : hottestOrderZh
-    return [...rawItems].sort((a, b) => {
+  // “最热”栏目需要按语言预设排序，但若在每次渲染时都重排，会覆盖用户拖拽排序的结果。
+  // 因此仅在「首次进入且数据仍为默认顺序」或「语言切换」时重排并持久化，
+  // 其余情况直接渲染 rawItems，保证拖拽排序生效。
+  const presetLangRef = useRef<string | null>(null)
+
+  useEffect(() => {
+    if (currentColumnID !== "hottest") return
+
+    const lang = i18n.language
+    const isFirstRun = presetLangRef.current === null
+    const langChanged = presetLangRef.current !== null && presetLangRef.current !== lang
+    if (!isFirstRun && !langChanged) return
+
+    // 首次进入时，若用户已经手动拖拽排序过（顺序不再等于默认顺序），则不覆盖
+    if (isFirstRun && rawItems.join("|") !== metadata.hottest.sources.join("|")) {
+      presetLangRef.current = lang
+      return
+    }
+
+    presetLangRef.current = lang
+    const order = lang === "en" ? hottestOrderEn : hottestOrderZh
+    const sorted = [...rawItems].sort((a, b) => {
       const ia = order.indexOf(a)
       const ib = order.indexOf(b)
       return (ia === -1 ? 999 : ia) - (ib === -1 ? 999 : ib)
     })
-  }, [rawItems, i18n.language, currentColumnID])
+    if (sorted.join("|") !== rawItems.join("|")) {
+      setItems(sorted)
+    }
+  }, [currentColumnID, i18n.language, rawItems, setItems])
+
+  const items = rawItems
 
   useEntireQuery(items)
   const { width } = useWindowSize()
