@@ -6,13 +6,37 @@ export async function rss2json(url: string): Promise<RSSInfo | undefined> {
 
   const data = await myFetch(url, { responseType: "text" })
 
+  return parseRSS(data as string)
+}
+
+interface AtomLink {
+  href?: string
+  rel?: string
+  type?: string
+}
+
+/**
+ * RSS 的 link 是纯文本，Atom 的 link 则是带属性的对象数组（alternate/self/replies 等），
+ * 这里统一取可访问的 alternate 地址。
+ */
+function parseLink(link: string | AtomLink | AtomLink[] | undefined): string {
+  if (!link) return ""
+  if (typeof link === "string") return link
+  if (Array.isArray(link)) {
+    const preferred = link.find(item => item?.href && (item.rel === "alternate" || item.type === "text/html"))
+    return preferred?.href ?? link.find(item => item?.href)?.href ?? ""
+  }
+  return link.href ?? ""
+}
+
+export function parseRSS(data: string): RSSInfo {
   const xml = new XMLParser({
     attributeNamePrefix: "",
     textNodeName: "$text",
     ignoreAttributes: false,
   })
 
-  const result = xml.parse(data as string)
+  const result = xml.parse(data)
 
   let channel = result.rss && result.rss.channel ? result.rss.channel : result.feed
   if (Array.isArray(channel)) channel = channel[0]
@@ -20,7 +44,7 @@ export async function rss2json(url: string): Promise<RSSInfo | undefined> {
   const rss = {
     title: channel.title ?? "",
     description: channel.description ?? "",
-    link: channel.link && channel.link.href ? channel.link.href : channel.link,
+    link: parseLink(channel.link),
     image: channel.image ? channel.image.url : channel["itunes:image"] ? channel["itunes:image"].href : "",
     category: channel.category || [],
     updatedTime: channel.lastBuildDate ?? channel.updated,
@@ -38,7 +62,7 @@ export async function rss2json(url: string): Promise<RSSInfo | undefined> {
       id: val.guid && val.guid.$text ? val.guid.$text : val.id,
       title: val.title && val.title.$text ? val.title.$text : val.title,
       description: val.summary && val.summary.$text ? val.summary.$text : val.description,
-      link: val.link && val.link.href ? val.link.href : val.link,
+      link: parseLink(val.link),
       author: val.author && val.author.name ? val.author.name : val["dc:creator"],
       created: val.updated ?? val.pubDate ?? val.created,
       category: val.category || [],

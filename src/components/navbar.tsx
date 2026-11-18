@@ -13,16 +13,6 @@ export function NavBar() {
       "shadow shadow-primary/20 hover:shadow-primary/50 transition-shadow-500",
     ])}
     >
-      <button
-        type="button"
-        onClick={() => toggle(true)}
-        className={$(
-          "px-2 hover:(bg-primary/10 rounded-md) op-70 dark:op-90",
-          "cursor-pointer transition-all",
-        )}
-      >
-        {t("nav.more")}
-      </button>
       {fixedColumnIds.map(columnId => (
         <Link
           key={columnId}
@@ -36,6 +26,16 @@ export function NavBar() {
           {t(`column.${columnId}`)}
         </Link>
       ))}
+      <button
+        type="button"
+        onClick={() => toggle(true)}
+        className={$(
+          "px-2 hover:(bg-primary/10 rounded-md) op-70 dark:op-90",
+          "cursor-pointer transition-all",
+        )}
+      >
+        {t("nav.more")}
+      </button>
     </span>
   )
 }

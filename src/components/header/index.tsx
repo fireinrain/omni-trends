@@ -5,7 +5,8 @@ import type { SourceID } from "@shared/types"
 import { NavBar } from "../navbar"
 import { Menu } from "./menu"
 import { LangToggle } from "./lang-toggle"
-import { currentSourcesAtom, goToTopAtom, viewModeAtom } from "~/atoms"
+import { SourceFilter } from "./source-filter"
+import { currentVisibleSourcesAtom, goToTopAtom, viewModeAtom } from "~/atoms"
 import { useLang } from "~/hooks/useLang"
 
 function ViewModeToggle() {
@@ -58,7 +59,7 @@ function Github() {
 }
 
 function Refresh() {
-  const currentSources = useAtomValue(currentSourcesAtom)
+  const currentSources = useAtomValue(currentVisibleSourcesAtom)
   const { refresh } = useRefetch()
   const refreshAll = useCallback(() => refresh(...currentSources), [refresh, currentSources])
 
@@ -108,6 +109,7 @@ export function Header() {
       <span className="justify-self-end flex gap-2 items-center text-xl text-primary-600 dark:text-primary">
         <GoTop />
         <ViewModeToggle />
+        <SourceFilter />
         <Refresh />
         <Github />
         <Afdian />

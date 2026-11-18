@@ -21,6 +21,7 @@ const PROXY_DOMAINS = [
   "googleapis.com",
   "producthunt.com",
   "apnews.com",
+  "chinadigitaltimes.net",
 ]
 
 let proxyAgent: any = null

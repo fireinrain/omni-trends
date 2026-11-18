@@ -16,10 +16,12 @@ import { useSortable } from "../common/dnd/useSortable"
 import { OverlayScrollbar } from "../common/overlay-scrollbar"
 import type { ItemsProps } from "./card"
 import { CardWrapper } from "./card"
-import { currentSourcesAtom } from "~/atoms"
+import { applyVisibleOrder } from "./order"
+import { currentSourcesAtom, currentVisibleSourcesAtom, sourceFilterOpenAtom } from "~/atoms"
 
 const AnimationDuration = 200
-const WIDTH = 350
+const WIDE_WIDTH = 440
+const NARROW_WIDTH = 360
 export function Dnd() {
   const [rawItems, setItems] = useAtom(currentSourcesAtom)
   const currentColumnID = useAtomValue(currentColumnIDAtom)
@@ -57,24 +59,30 @@ export function Dnd() {
     }
   }, [currentColumnID, i18n.language, rawItems, setItems])
 
-  const items = rawItems
+  const items = useAtomValue(currentVisibleSourcesAtom)
 
   useEntireQuery(items)
   const { width } = useWindowSize()
   const minWidth = useMemo(() => {
     // double padding = 32
-    return Math.min(width - 32, WIDTH)
+    const preferred = width >= 1280 ? WIDE_WIDTH : NARROW_WIDTH
+    return Math.min(width - 32, preferred)
   }, [width])
 
-  if (!items.length) return null
+  if (!items.length) {
+    if (currentColumnID === "hottest" || currentColumnID === "realtime") {
+      return <SourceFilterEmpty />
+    }
+    return null
+  }
 
   return (
-    <DndWrapper items={items} setItems={setItems} isSingleColumn={isMobile}>
+    <DndWrapper items={items} allItems={rawItems} setItems={setItems} isSingleColumn={isMobile}>
       <OverlayScrollbar defer className="overflow-x-auto">
         <motion.ol
           className={isMobile
-            ? "flex px-2 gap-6 pb-4 scroll-smooth"
-            : "grid w-full gap-6"}
+            ? "flex px-2 gap-3 pb-4 scroll-smooth"
+            : "grid w-full gap-4"}
           ref={parent}
           style={isMobile
             ? {
@@ -102,7 +110,7 @@ export function Dnd() {
             <motion.li
               key={id}
               className={$(isMobile && "flex-shrink-0", isMobile && index === items.length - 1 && "mr-2")}
-              style={isMobile ? { width: `${width - 16 > WIDTH ? WIDTH : width - 16}px` } : undefined}
+              style={isMobile ? { width: `${width - 16 > WIDE_WIDTH ? WIDE_WIDTH : width - 16}px` } : undefined}
               transition={{
                 type: "tween",
                 duration: AnimationDuration / 1000,
@@ -132,8 +140,29 @@ export function Dnd() {
   )
 }
 
-function DndWrapper({ items, setItems, isSingleColumn, children }: PropsWithChildren<{
+function SourceFilterEmpty() {
+  const { t } = useTranslation()
+  const setOpen = useSetAtom(sourceFilterOpenAtom)
+  return (
+    <div className="flex flex-col items-center justify-center gap-3 py-20 text-sm op-60">
+      <span>{t("customize.emptyState")}</span>
+      <button
+        type="button"
+        className="rounded-full bg-primary/10 px-4 py-2 op-100 transition-all hover:bg-primary/20"
+        onClick={() => setOpen(true)}
+      >
+        <span className="i-ph:sliders-horizontal-duotone mr-1 align-middle" />
+        {t("customize.title")}
+      </button>
+    </div>
+  )
+}
+
+function DndWrapper({ items, allItems, setItems, isSingleColumn, children }: PropsWithChildren<{
+  /** 当前可见的数据源 */
   items: SourceID[]
+  /** 包含已隐藏数据源的完整列表 */
+  allItems: SourceID[]
   setItems: (items: SourceID[]) => void
   isSingleColumn: boolean
 }>) {
@@ -151,8 +180,9 @@ function DndWrapper({ items, setItems, isSingleColumn, children }: PropsWithChil
       closestEdgeOfTarget,
       axis: isSingleColumn ? "horizontal" : "vertical",
     })
-    setItems(update)
-  }, [items, setItems, isSingleColumn])
+    // 只重排可见数据源，隐藏的数据源保持原位
+    setItems(applyVisibleOrder(allItems, update))
+  }, [items, allItems, setItems, isSingleColumn])
   // 避免动画干扰
   const { run } = useThrottleFn(onDropTargetChange, {
     leading: true,

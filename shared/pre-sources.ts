@@ -335,7 +335,7 @@ export const originSources = {
     type: "realtime",
     column: "world",
     color: "red",
-    desc: "来自第三方网站: 早晨报",
+    desc: "来自联合早报官网: 国际",
     home: "https://www.zaobao.com",
   },
   "v2ex": {
@@ -730,6 +730,15 @@ export const originSources = {
     color: "red",
     interval: Time.Common,
     home: "https://www.economist.com",
+  },
+  "chinadigitaltimes": {
+    name: "中国数字时代",
+    type: "realtime",
+    column: "world",
+    color: "yellow",
+    interval: Time.Common,
+    desc: "来自中国数字时代官网 RSS",
+    home: "https://chinadigitaltimes.net/chinese",
   },
   // ===== 财经 =====
   "techflowpost": {

@@ -1,3 +1,4 @@
 export default defineSource({
-  oschina: defineRSSSource("https://news.google.com/rss/search?q=site:oschina.net&hl=zh-CN&gl=CN&ceid=CN:zh-Hans"),
+  // 官方 RSS。原先使用 Google News 的 site: 搜索，国内网络无法访问。
+  oschina: defineRSSSource("https://www.oschina.net/news/rss"),
 })
