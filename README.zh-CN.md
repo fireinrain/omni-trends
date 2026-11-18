@@ -13,6 +13,7 @@
 - **100+ 个数据源**，覆盖国内、国际媒体、科技、财经
 - **代理支持** — 在 `.env.server` 配置 `HTTPS_PROXY` 即可访问被墙站点
 - **修复多个失效源** — freebuf（TLS 指纹绕过）、小红书（edith API）等
+- **信息瀑布流模式** — 在卡片视图外提供基于时间线、按来源混排的热点信息流
 - **深色/浅色模式**切换
 - **PWA 支持** — 可安装为桌面应用
 
@@ -88,17 +89,33 @@ docker compose up -d                                        # 拉取已发布镜
 ```bash
 corepack enable
 pnpm install
+pnpm dev          # http://localhost:5173
+```
+
+常用命令：
+
+```bash
+pnpm build        # 生产构建
+pnpm test --run   # 单元测试
+pnpm typecheck    # 类型检查（自动生成 sources.json 与类型声明）
+pnpm lint         # ESLint
+```
+
+生产运行：
+
+```bash
 pnpm build
 PORT=20193 node --env-file=.env.server dist/output/server/index.mjs
 ```
-
-> `pnpm dev` 有兼容性问题，请用 build + run 方式。
 
 ### 添加数据源
 
 1. 在 `shared/pre-sources.ts` 定义元信息
 2. 在 `server/sources/{name}.ts` 创建抓取逻辑
 3. 重新构建并测试：`curl http://localhost:20193/api/s?id={name}&latest`
+
+> `shared/sources.json` 和 `shared/pinyin.json` 是生成文件（已 gitignore），由 `pnpm build` / `pnpm dev` / `pnpm typecheck`
+> 自动生成。
 
 ## 致谢
 

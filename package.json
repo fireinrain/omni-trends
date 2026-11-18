@@ -13,12 +13,15 @@
     "dev": "npm run presource && vite dev",
     "build": "npm run presource && vite build",
     "lint": "eslint",
-    "presource": "tsx ./scripts/favicon.ts && tsx ./scripts/source.ts",
+    "gen:sources": "tsx ./scripts/source.ts",
+    "gen:imports": "tsx ./scripts/imports.ts",
+    "gen:icons": "tsx ./scripts/favicon.ts",
+    "presource": "npm run gen:sources",
     "start": "node --env-file .env.server dist/output/server/index.mjs",
-    "typecheck": "tsc --noEmit -p tsconfig.node.json && tsc --noEmit -p tsconfig.app.json",
+    "typecheck": "npm run gen:sources && npm run gen:imports && tsc --noEmit -p tsconfig.node.json && tsc --noEmit -p tsconfig.app.json",
     "release": "bumpp",
     "prepare": "simple-git-hooks",
-    "test": "vitest -c vitest.config.ts"
+    "test": "npm run gen:sources && vitest -c vitest.config.ts"
   },
   "dependencies": {
     "@atlaskit/pragmatic-drag-and-drop": "^1.7.7",

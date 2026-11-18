@@ -7,6 +7,7 @@ import unimport from "unimport/unplugin"
 import dotenv from "dotenv"
 import nitro from "./nitro.config"
 import { projectDir } from "./shared/dir"
+import { unimportDts, unimportOptions } from "./tools/unimport"
 import pwa from "./pwa.config"
 
 dotenv.config({
@@ -26,18 +27,7 @@ export default defineConfig({
       // error with auto import and vite-plugin-pwa
       // autoCodeSplitting: true,
     }),
-    unimport.vite({
-      dirs: ["src/hooks", "shared", "src/utils", "src/atoms"],
-      presets: ["react", {
-        from: "jotai",
-        imports: ["atom", "useAtom", "useAtomValue", "useSetAtom"],
-      }],
-      imports: [
-        { from: "clsx", name: "clsx", as: "$" },
-        { from: "jotai/utils", name: "atomWithStorage" },
-      ],
-      dts: "imports.app.d.ts",
-    }),
+    unimport.vite({ ...unimportOptions, dts: unimportDts }),
     unocss(),
     react(),
     pwa(),

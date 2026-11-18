@@ -37,3 +37,9 @@ export const goToTopAtom = atom({
   el: undefined as HTMLElement | undefined,
   fn: undefined as (() => void) | undefined,
 })
+
+export type ViewMode = "cards" | "waterfall"
+export const viewModeAtom = atomWithStorage<ViewMode>("omni.viewMode", "cards")
+
+export type WaterfallOrder = "mixed" | "timeline"
+export const waterfallOrderAtom = atomWithStorage<WaterfallOrder>("omni.waterfallOrder", "mixed")

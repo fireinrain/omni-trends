@@ -5,8 +5,22 @@ import type { SourceID } from "@shared/types"
 import { NavBar } from "../navbar"
 import { Menu } from "./menu"
 import { LangToggle } from "./lang-toggle"
-import { currentSourcesAtom, goToTopAtom } from "~/atoms"
+import { currentSourcesAtom, goToTopAtom, viewModeAtom } from "~/atoms"
 import { useLang } from "~/hooks/useLang"
+
+function ViewModeToggle() {
+  const [mode, setMode] = useAtom(viewModeAtom)
+  const { t } = useTranslation()
+  const isWaterfall = mode === "waterfall"
+  return (
+    <button
+      type="button"
+      title={isWaterfall ? t("view.cards") : t("view.waterfall")}
+      className={$("btn", isWaterfall ? "i-ph:squares-four-duotone" : "i-ph:columns-duotone")}
+      onClick={() => setMode(isWaterfall ? "cards" : "waterfall")}
+    />
+  )
+}
 
 function GoTop() {
   const { ok, fn: goToTop } = useAtomValue(goToTopAtom)
@@ -93,6 +107,7 @@ export function Header() {
       </span>
       <span className="justify-self-end flex gap-2 items-center text-xl text-primary-600 dark:text-primary">
         <GoTop />
+        <ViewModeToggle />
         <Refresh />
         <Github />
         <Afdian />

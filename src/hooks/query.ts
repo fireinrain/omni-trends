@@ -19,7 +19,7 @@ export function useUpdateQuery() {
 
 export function useEntireQuery(items: SourceID[]) {
   const update = useUpdateQuery()
-  useQuery({
+  return useQuery({
     // sort in place
     queryKey: ["entire", [...items].sort()],
     queryFn: async ({ queryKey }) => {

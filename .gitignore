@@ -9,6 +9,8 @@ dist/
 dev-dist
 *.tsbuildinfo
 imports.app.d.ts
+shared/sources.json
+shared/pinyin.json
 package-lock.json
 .specstory/vendors/
 vendors/

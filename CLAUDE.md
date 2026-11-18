@@ -1,6 +1,6 @@
 # OmniTrends
 
-> 最后更新：2026-06-05
+> 最后更新：2026-11-18
 
 实时热点新闻聚合阅读器，从 100+ 个数据源抓取热门新闻统一展示。
 
@@ -54,7 +54,7 @@ import * as x from "glob:./sources/{*.ts,**/index.ts}"
 ```
 shared/
   pre-sources.ts        # 数据源定义（名称、颜色、间隔、分类）
-  sources.ts            # 构建生成的源注册表
+  sources.ts            # 运行时读取 sources.json 的源注册表
   types.ts              # NewsItem, Source, SourceResponse
   consts.ts             # TTL、Interval 常量
   metadata.ts           # 栏目分类（国内/国际/科技/财经/关注/实时/最热）
@@ -89,8 +89,26 @@ src/
 | 容器 | `http://localhost:4444/` | Docker Compose |
 
 ```bash
+pnpm dev                                                     # 开发模式，默认 5173 端口
 pnpm build && PORT=20193 node --env-file=.env.server dist/output/server/index.mjs
+pnpm test --run                                              # 单元测试
+pnpm typecheck                                               # 自动生成类型声明后执行 tsc
+pnpm gen:icons                                               # 仅为新增数据源下载缺失图标
 ```
+
+### 生成文件
+
+以下文件不入库，按需生成：
+
+| 文件                                         | 生成命令               | 触发时机                                  |
+|--------------------------------------------|--------------------|---------------------------------------|
+| `shared/sources.json`、`shared/pinyin.json` | `pnpm gen:sources` | `dev` / `build` / `typecheck`         |
+| `imports.app.d.ts`                         | `pnpm gen:imports` | `typecheck`，`dev` / `build` 由 Vite 生成 |
+
+修改 `shared/pre-sources.ts` 后重新运行 `pnpm gen:sources`（或直接 build/typecheck）即可。
+
+数据源图标已全部提交在 `public/icons/`，`dev` / `build` 不会联网抓取。只有新增数据源时才需要运行 `pnpm gen:icons`
+补齐缺失图标（已有图标不会重复下载）。
 
 ### 测试单个源
 
@@ -118,6 +136,18 @@ curl -s "http://localhost:20193/api/s?id={source_id}"
   - Google News RSS：Economist、TechFlow、证券时报、开源中国、SegmentFault
 - 启用深色/浅色模式切换（ThemeToggle，默认 auto）
 - 下载新源图标到 `public/icons/`
+- 新增「信息瀑布流」视图（2026-11-18）：
+  - 顶部按钮在「卡片模式 / 瀑布流模式」间切换，选择持久化到 `omni.viewMode`
+  - 合并当前栏目的所有数据源，按时间分桶、桶内按来源轮询交错，实现基于时间线但乱序的信息流
+  - 支持「乱序 / 时间线」切换、响应式分栏和渐进加载（`src/components/waterfall/`）
+- 停止在 `dev` / `build` 时抓取 favicon（2026-11-18）：
+  - 图标已全部入库，`presource` 只生成 sources/pinyin
+  - `scripts/favicon.ts` 改为显式 `pnpm gen:icons`，按 `id.split("-")[0]` 去重，仅下载缺失图标
+- 工程化修复（2026-11-18）：
+  - `entire.post.ts` 不再静默吞异常，非法请求体返回 4xx
+  - `sources.json` / `pinyin.json` 移出版本库，避免生成物与源码漂移
+  - `imports.app.d.ts` 可独立生成，全新克隆可直接 `pnpm typecheck`
+  - 测试从 2 个文件扩充到 6 个，覆盖 crypto/base64/source/shared utils
 - 数据源修复（2026-05-22）：
   - **freebuf**：改用 `node:https` + RSS feed（ofetch/undici 被 TLS 指纹检测拦截 405）
   - **xiaohongshu**：改用 edith API 热搜接口（需完整移动端 headers 含 shield/xy-common-params）
@@ -134,8 +164,7 @@ curl -s "http://localhost:20193/api/s?id={source_id}"
 
 ### 已知问题
 
-- ESLint `react-dom/no-children-in-void-dom-elements` 报错（项目原有 bug），提交时需临时绕过 lint-staged
-- `dev` 模式有兼容性问题，只能 build 后运行
+- `server/sources/weibo.ts` 硬编码了微博 Cookie，可能随时失效
 - 36kr 人气榜被 WAF 拦截，无法服务端抓取
 - freebuf 有 TLS 指纹检测，必须用 `node:https` 而非 ofetch/undici
 - xiaohongshu edith API 的 headers 含硬编码设备指纹，可能随时失效
@@ -145,11 +174,14 @@ curl -s "http://localhost:20193/api/s?id={source_id}"
 
 - 参考项目在 `vendors/`（DailyHotApi、next-daily-hot、HotList-Web），已 gitignore
 - 图标查找逻辑：`src/components/column/card.tsx` → `url(/icons/${id.split("-")[0]}.png)`
+- 图标文件已入库；新增数据源后运行 `pnpm gen:icons`，脚本只补齐缺失项，不会覆盖已有图标
 - RSS 解析用 `rss2json.ts`；ofetch 自动解析 XML 会出错时需加 `responseType: "text"`
 - 部分网站有 TLS 指纹检测（如 freebuf），ofetch/undici 会被拦截，需用 `node:https` 模块绕过
 - 数据源禁用方式：在 `shared/pre-sources.ts` 对应源配置中加 `disable: true`
 - 测试单个源时直接根路径：`curl http://localhost:20193/api/s?id={id}&latest`
 - 缓存存储在 `.data/db.sqlite3`，清除特定源缓存：`sqlite3 .data/db.sqlite3 "DELETE FROM cache WHERE id='xxx';"`
+- `shared/sources.json`、`shared/pinyin.json`、`imports.app.d.ts` 均为生成文件（已 gitignore），不要手动编辑
+- 新增 npm script 时避免使用可能与现有脚本形成 `pre`/`post` 钩子的名字（例如已有 `presource` 时不要再加 `source`）
 
 ## 参考文档
 

@@ -32,5 +32,13 @@
   "time.hoursAgo": "{{count}}小时前",
   "time.date": "{{month}}月{{day}}日",
   "title.site": "热榜聚合",
-  "title.page": "OmniTrends | {{name}}"
+  "title.page": "OmniTrends | {{name}}",
+  "view.cards": "卡片模式",
+  "view.waterfall": "瀑布流模式",
+  "waterfall.mixed": "乱序",
+  "waterfall.timeline": "时间线",
+  "waterfall.hint": "共 {{count}} 条 · 基于时间线混排",
+  "waterfall.empty": "当前栏目还没有可展示的内容",
+  "waterfall.partialFail": "{{count}} 个数据源加载失败",
+  "waterfall.loadMore": "加载更多"
 }
