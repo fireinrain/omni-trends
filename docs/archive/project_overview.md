@@ -8,8 +8,8 @@
 
 OmniTrends 是一个**实时热点新闻聚合阅读器**，从 98 个数据源抓取热门新闻，在一个页面内统一展示。用户无需逐个打开微博、知乎、B站、GitHub、Reddit 等平台，即可一览全网热点。
 
-- **仓库**：https://github.com/TuTouPower/omni_trends
-- **作者**：TuTouPower
+- **仓库**：https://github.com/fireinrain/omni-trends
+- **作者**：fireinrain
 - **版本**：0.0.39
 - **包管理**：pnpm 10
 
@@ -349,7 +349,7 @@ docker compose up -d
   2. 设置 QEMU + Buildx（多平台构建）
   3. 登录 GHCR（GitHub Container Registry）
   4. 提取 metadata（版本标签）
-  5. 构建并推送镜像到 `ghcr.io/tutoupower/omni_trends`
+  5. 构建并推送镜像到 `ghcr.io/fireinrain/omni-trends`
 - **平台**：`linux/amd64` + `linux/arm64`
 - **标签规则**：`latest`、分支名、语义化版本号
 
@@ -378,7 +378,7 @@ docker compose up -d
                               ├─▶ 构建 Docker 镜像
                               │   (amd64 + arm64)
                               │
-                              ├─▶ 推送 ghcr.io/tutoupower/omni_trends
+                              ├─▶ 推送 ghcr.io/fireinrain/omni-trends
                               │   标签: latest, v1.0.0, 1.0
                               │
                               └─▶ SSH 到远程服务器
@@ -517,7 +517,7 @@ docker compose up -d
 ```yaml
 services:
   omnitrends:
-    image: ghcr.io/tutoupower/omni_trends:latest
+    image: ghcr.io/fireinrain/omni-trends:latest
     # ... 现有配置不变
 
   watchtower:

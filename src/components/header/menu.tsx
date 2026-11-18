@@ -45,19 +45,19 @@ export function Menu() {
               </li>
               <li className="flex gap-2 items-center">
                 <a
-                  href="https://github.com/TuTouPower/omni_trends"
+                  href="https://github.com/fireinrain/omni-trends"
                 >
                   <img
                     alt="GitHub stars badge"
-                    src="https://img.shields.io/github/stars/TuTouPower/omni_trends?logo=github&style=flat&labelColor=%235e3c40&color=%23614447"
+                    src="https://img.shields.io/github/stars/fireinrain/omni-trends?logo=github&style=flat&labelColor=%235e3c40&color=%23614447"
                   />
                 </a>
                 <a
-                  href="https://github.com/TuTouPower/omni_trends/fork"
+                  href="https://github.com/fireinrain/omni-trends/fork"
                 >
                   <img
                     alt="GitHub forks badge"
-                    src="https://img.shields.io/github/forks/TuTouPower/omni_trends?logo=github&style=flat&labelColor=%235e3c40&color=%23614447"
+                    src="https://img.shields.io/github/forks/fireinrain/omni-trends?logo=github&style=flat&labelColor=%235e3c40&color=%23614447"
                   />
                 </a>
               </li>

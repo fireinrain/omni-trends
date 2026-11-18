@@ -5,10 +5,10 @@
   "private": true,
   "packageManager": "pnpm@10.30.3",
   "author": {
-    "url": "https://github.com/TuTouPower/",
-    "name": "TuTouPower"
+    "url": "https://github.com/fireinrain/",
+    "name": "fireinrain"
   },
-  "homepage": "https://github.com/TuTouPower/omni_trends",
+  "homepage": "https://github.com/fireinrain/omni-trends",
   "scripts": {
     "dev": "npm run presource && vite dev",
     "build": "npm run presource && vite build",

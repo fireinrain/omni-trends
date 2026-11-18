@@ -1,6 +1,6 @@
 services:
   omnitrends:
-    image: ghcr.io/tutoupower/omni_trends:main
+    image: ghcr.io/fireinrain/omni-trends:main
     container_name: omnitrends
     ports:
       - '4444:4444'
