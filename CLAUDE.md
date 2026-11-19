@@ -283,6 +283,16 @@ export default defineSource({
 
 ## 维护注意事项
 
+### CI 镜像构建
+
+`.github/workflows/docker.yml` 只构建并推送 `linux/amd64` 镜像到 GHCR，在 `ubuntu-24.04` 上原生构建：
+
+- 设置 `timeout-minutes: 60`，并用 `concurrency` 取消已被新提交取代的运行，避免任务超过 6 小时上限。
+- 使用 GHA 构建缓存（`scope=linux-amd64`）加速重复构建。
+- 不再使用 QEMU 或 arm64 runner；之前的跨架构模拟构建曾导致任务超时。
+- Dockerfile 使用 `pnpm install --frozen-lockfile`，因此改动依赖时必须同步更新 `pnpm-lock.yaml`。
+- Actions 使用 Node 24 runtime 的版本：`checkout@v7`、`setup-node@v7`（release 工作流）、Docker 系列 `login@v4` / `setup-buildx@v4` / `metadata@v6` / `build-push@v7`。
+
 ### unimport / mlly 的单行写 atom 问题
 
 `unimport` 底层的 `mlly` 会把单行写 atom 的参数误判为导出：

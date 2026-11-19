@@ -42,7 +42,7 @@
     "consola": "^3.4.2",
     "cookie-es": "^2.0.0",
     "dayjs": "1.11.13",
-    "db0": "^0.3.1",
+    "db0": "^0.3.4",
     "defu": "^6.1.4",
     "fast-xml-parser": "^5.4.1",
     "framer-motion": "^12.34.3",

@@ -215,7 +215,7 @@ docker compose up -d
 
 ### CI 镜像
 
-`.github/workflows/docker.yml` 会在推送 `main` 分支或 `v*` 标签时构建并推送 `linux/amd64` 与 `linux/arm64` 镜像到 GHCR。
+`.github/workflows/docker.yml` 会在推送 `main` 分支或 `v*` 标签时构建并推送 `linux/amd64` 镜像到 GHCR。构建在 `ubuntu-24.04` 上原生运行，设置 60 分钟超时和按分支分组的并发控制，旧任务不会一直占用构建资源。
 
 ## 开发
 

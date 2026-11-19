@@ -215,7 +215,7 @@ Cache data is stored in the Docker volume `omnitrends_data`, mounted at `/usr/ap
 
 ### CI image
 
-`.github/workflows/docker.yml` builds and pushes `linux/amd64` and `linux/arm64` images to GHCR when `main` or a `v*` tag is pushed.
+`.github/workflows/docker.yml` builds and pushes a `linux/amd64` image to GHCR when `main` or a `v*` tag is pushed. The build runs natively on `ubuntu-24.04` with a 60-minute timeout and a per-branch concurrency group, so an old run cannot keep building for hours.
 
 ## Development
 
