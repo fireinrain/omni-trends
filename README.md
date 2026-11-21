@@ -115,7 +115,7 @@ The following sources have been fixed for their current site structure and norma
 
 - **CLS**: signed requests to the official API.
 - **PCbeta**: handles the forum's environment and slider challenge cookies.
-- **Lianhe Zaobao**: parses the official world-news section.
+- **Lianhe Zaobao**: consumes the `zaobao/realtime/world` RSS feed, avoiding the official site's region redirect.
 - **TechFlow**: official RSS.
 - **OSChina**: official RSS.
 - **SegmentFault**: official Atom feed.

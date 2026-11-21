@@ -115,7 +115,7 @@
 
 - **财联社（CLS）**：使用官网接口签名请求。
 - **PCbeta**：处理论坛的环境校验和滑块校验 Cookie。
-- **联合早报**：直接解析官网国际版块。
+- **联合早报**：使用 `zaobao/realtime/world` RSS 源，避开官网的地区跳转。
 - **深潮 TechFlow**：使用官方 RSS。
 - **开源中国**：使用官方 RSS。
 - **SegmentFault**：使用官方 Atom feed。
