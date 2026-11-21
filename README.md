@@ -12,14 +12,14 @@ A real-time trending-news aggregator that brings more than 100 sources together 
 
 ## Features
 
-- **118 sources** across China, world, tech, and finance, including 44 "hottest" sources and 45 "realtime" sources.
+- **119 sources** across China, world, tech, and finance, including 44 "hottest" sources and 46 "realtime" sources.
 - **Two reading modes**: cards for source-by-source browsing, waterfall for a mixed timeline.
 - **Source customization**: choose which sources appear in the Hottest and Realtime columns.
 - **Focus and search**: star favorite sources, then search all sources by name, subtitle, or pinyin.
 - **Drag-and-drop ordering**: reorder cards and keep the order across refreshes.
 - **Responsive layout**: multi-column desktop grid, horizontal swiping on mobile, 1–3 waterfall columns.
 - **Proxy support**: route selected international sources through `HTTPS_PROXY` / `HTTP_PROXY`.
-- **Local cache**: SQLite-backed caching reduces repeated fetches and speeds up first render.
+- **Flexible cache**: file-backed SQLite for local/Docker, optional Turso/libSQL for Vercel, reducing repeated fetches and speeding up first render.
 - **Dark/light mode**, **Chinese/English UI**, and **PWA installation**.
 
 ## Interface
@@ -80,7 +80,7 @@ The project currently registers **107 source IDs** (including sub-sources), impl
 
 | Category | Representative sources |
 |----------|------------------------|
-| China | Weibo, Zhihu, Douyin, Xiaohongshu, Bilibili, Baidu, Toutiao, Tieba, Douban, China News, Time Weekly |
+| China | Weibo, Zhihu, Douyin, Xiaohongshu, Bilibili, Baidu, Toutiao, Tieba, Douban, China News, Time Weekly, SanLian LifeWeek |
 | World | BBC, The Guardian, The New York Times, WSJ, NHK, Lianhe Zaobao, China Digital Times, NPR, ABC News, France 24 |
 | Tech | GitHub, Hacker News, Product Hunt, 36Kr, SSPAI, Juejin, PCbeta, Coolapk, TMTPost, Leiphone, The Verge, TechCrunch, Ars Technica, WIRED, CNET, ZDNet, GitHub Blog, Stack Overflow Blog, MIT Tech Review, IEEE Spectrum, JS Weekly, Python Weekly, Golang Weekly, Rust Weekly, Java Weekly |
 | Finance | CLS, Xueqiu, Wallstreetcn, Securities Times, TechFlow, Gelonghui, NGA大时代, EEO, MarketWatch, Seeking Alpha |
@@ -107,6 +107,7 @@ All fetching happens on the server:
 - Each source has an `interval`; requests within the interval return the cache immediately.
 - The global `TTL` is 30 minutes. `?latest` bypasses TTL, but not `interval`.
 - If a fetch fails and an older cache exists, the cached response is returned.
+- On Vercel, the cache is stored in Turso/libSQL over HTTP; local and Docker keep using a file-backed SQLite database.
 
 ### Source health
 
@@ -172,12 +173,16 @@ Copy `example.env.server` to `.env.server` and fill in what you need:
 | `PORT` | No | Server port, default 3000; examples use 20193 |
 | `ENABLE_CACHE` | No | Enable SQLite caching, enabled by default; set `false` to disable |
 | `INIT_TABLE` | No | Initialize the cache table on startup, enabled by default; set `false` to skip |
+| `TURSO_DATABASE_URL` | Vercel only | Turso/libSQL URL such as `libsql://...turso.io`; when set at build time, Nitro uses the HTTP cache instead of local SQLite |
+| `TURSO_AUTH_TOKEN` | No | Turso auth token, required for private databases |
 | `PRODUCTHUNT_API_TOKEN` | No | Product Hunt token; the source fails without it |
 | `XHS_COOKIE` | No | Xiaohongshu web fallback cookie; must contain `web_session` |
 | `HTTPS_PROXY` | No | HTTPS proxy, e.g. `http://127.0.0.1:7897` |
 | `HTTP_PROXY` | No | HTTP proxy, usually the same as `HTTPS_PROXY` |
 
 > `G_CLIENT_ID`, `G_CLIENT_SECRET`, and `JWT_SECRET` in `example.env.server` are legacy OAuth placeholders. The current code no longer reads them, so they can stay empty.
+
+> Nitro serializes database configuration at build time. Set the Turso variables before `pnpm build` / the Vercel build, and redeploy after changing them.
 
 ### Proxy behavior
 
@@ -216,6 +221,22 @@ Cache data is stored in the Docker volume `omnitrends_data`, mounted at `/usr/ap
 ### CI image
 
 `.github/workflows/docker.yml` builds and pushes a `linux/amd64` image to GHCR when `main` or a `v*` tag is pushed. The build runs natively on `ubuntu-24.04` with a 60-minute timeout and a per-branch concurrency group, so an old run cannot keep building for hours.
+
+### Vercel + Turso
+
+1. Create a Turso database and an auth token. Optionally create the cache table once, then set `INIT_TABLE=false` in Vercel:
+   ```sql
+   CREATE TABLE IF NOT EXISTS cache (
+     id TEXT PRIMARY KEY,
+     updated INTEGER,
+     data TEXT
+   );
+   ```
+2. In Vercel Project Settings, add `TURSO_DATABASE_URL` (for example `libsql://<db>-<org>.turso.io`) and `TURSO_AUTH_TOKEN`.
+3. Use `pnpm build` as the build command. Vercel builds are detected automatically and write `.vercel/output`; you can also set `BUILD_PRESET=vercel` or `NITRO_PRESET=vercel` explicitly.
+4. Redeploy after changing either Turso variable because Nitro embeds database options into the server bundle at build time.
+
+Local and Docker deployments do not need Turso variables and keep using the SQLite file under `.data`.
 
 ## Development
 

@@ -1,7 +1,12 @@
 import { join } from "node:path"
+import process from "node:process"
 import viteNitro from "vite-plugin-with-nitro"
+import { getDatabaseConfig } from "./tools/database-config"
 import { RollopGlob } from "./tools/rollup-glob"
 import { projectDir } from "./shared/dir"
+
+const database = getDatabaseConfig()
+const preset = process.env.BUILD_PRESET || process.env.NITRO_PRESET || (process.env.VERCEL ? "vercel" : undefined)
 
 const nitroOption: Parameters<typeof viteNitro>[0] = {
   experimental: {
@@ -11,20 +16,12 @@ const nitroOption: Parameters<typeof viteNitro>[0] = {
     plugins: [RollopGlob()],
   },
   sourceMap: false,
-  database: {
-    default: {
-      connector: "better-sqlite3",
-    },
-  },
-  devDatabase: {
-    default: {
-      connector: "better-sqlite3",
-    },
-  },
+  database,
+  devDatabase: database,
   imports: {
     dirs: ["server/utils", "shared"],
   },
-  preset: "node-server",
+  ...(preset ? { preset } : {}),
   alias: {
     "@shared": join(projectDir, "shared"),
     "#": join(projectDir, "server"),

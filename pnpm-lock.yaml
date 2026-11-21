@@ -41,6 +41,9 @@ importers:
       '@ikenxuan/xhshow-ts':
         specifier: ^1.2.0
         version: 1.2.0
+      '@libsql/client':
+        specifier: ^0.15.4
+        version: 0.15.4
       '@modelcontextprotocol/sdk':
         specifier: ^1.27.1
         version: 1.27.1(zod@4.3.6)
@@ -8771,12 +8774,10 @@ snapshots:
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
-    optional: true
 
   '@libsql/core@0.15.4':
     dependencies:
       js-base64: 3.7.7
-    optional: true
 
   '@libsql/darwin-arm64@0.5.9':
     optional: true
@@ -8793,10 +8794,8 @@ snapshots:
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
-    optional: true
 
-  '@libsql/isomorphic-fetch@0.3.1':
-    optional: true
+  '@libsql/isomorphic-fetch@0.3.1': {}
 
   '@libsql/isomorphic-ws@0.1.5':
     dependencies:
@@ -8805,7 +8804,6 @@ snapshots:
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
-    optional: true
 
   '@libsql/linux-arm-gnueabihf@0.5.9':
     optional: true
@@ -8969,8 +8967,7 @@ snapshots:
       '@tybys/wasm-util': 0.10.1
     optional: true
 
-  '@neon-rs/load@0.0.4':
-    optional: true
+  '@neon-rs/load@0.0.4': {}
 
   '@netlify/binary-info@1.0.0': {}
 
@@ -9815,7 +9812,6 @@ snapshots:
   '@types/node@22.15.17':
     dependencies:
       undici-types: 6.21.0
-    optional: true
 
   '@types/normalize-package-data@2.4.4': {}
 
@@ -9838,7 +9834,6 @@ snapshots:
   '@types/ws@8.18.1':
     dependencies:
       '@types/node': 22.15.17
-    optional: true
 
   '@types/yauzl@2.10.3':
     dependencies:
@@ -11139,8 +11134,7 @@ snapshots:
 
   detect-libc@1.0.3: {}
 
-  detect-libc@2.0.2:
-    optional: true
+  detect-libc@2.0.2: {}
 
   detect-libc@2.0.4: {}
 
@@ -12768,8 +12762,7 @@ snapshots:
       '@types/react': 19.2.14
       react: 19.1.0
 
-  js-base64@3.7.7:
-    optional: true
+  js-base64@3.7.7: {}
 
   js-cookie@2.2.1: {}
 
@@ -12880,7 +12873,6 @@ snapshots:
       '@libsql/linux-x64-gnu': 0.5.9
       '@libsql/linux-x64-musl': 0.5.9
       '@libsql/win32-x64-msvc': 0.5.9
-    optional: true
 
   lines-and-columns@1.2.4: {}
 
@@ -13723,8 +13715,7 @@ snapshots:
 
   process@0.11.10: {}
 
-  promise-limit@2.7.0:
-    optional: true
+  promise-limit@2.7.0: {}
 
   prompts@2.4.2:
     dependencies:
@@ -14762,8 +14753,7 @@ snapshots:
       magic-string: 0.30.21
       unplugin: 2.3.2
 
-  undici-types@6.21.0:
-    optional: true
+  undici-types@6.21.0: {}
 
   undici@7.22.0: {}
 
@@ -15360,8 +15350,7 @@ snapshots:
       imurmurhash: 0.1.4
       signal-exit: 4.1.0
 
-  ws@8.18.0:
-    optional: true
+  ws@8.18.0: {}
 
   xml-name-validator@4.0.0: {}
 

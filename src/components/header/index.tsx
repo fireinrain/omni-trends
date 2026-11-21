@@ -7,7 +7,6 @@ import { Menu } from "./menu"
 import { LangToggle } from "./lang-toggle"
 import { SourceFilter } from "./source-filter"
 import { currentVisibleSourcesAtom, goToTopAtom, viewModeAtom } from "~/atoms"
-import { useLang } from "~/hooks/useLang"
 
 function ViewModeToggle() {
   const [mode, setMode] = useAtom(viewModeAtom)
@@ -81,22 +80,16 @@ function Refresh() {
 }
 
 export function Header() {
-  const { lang } = useLang()
-  const { t } = useTranslation()
-
   return (
     <>
       <span className="flex justify-self-start">
         <Link to="/" className="flex gap-2 items-center">
-          <div className="h-10 w-10 bg-cover bg-center rounded" title="logo" style={{ backgroundImage: `url(${import.meta.env.BASE_URL}favicon.png)` }} />
-          <span className="text-2xl font-brand line-height-none!">
+          <div className="h-10 w-10 shrink-0 bg-cover bg-center rounded" title="logo" style={{ backgroundImage: `url(${import.meta.env.BASE_URL}favicon.png)` }} />
+          <span className="text-2xl font-brand line-height-none! shrink-0">
             <p>Omni</p>
             <p className="mt--1">
               <span className="color-primary-6">T</span>
               <span>rends</span>
-              {lang === "zh" && (
-                <span className="text-sm text-neutral-400 ml-2 tracking-widest">{t("title.site")}</span>
-              )}
             </p>
           </span>
         </Link>

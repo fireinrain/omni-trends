@@ -12,14 +12,14 @@
 
 ## 核心特性
 
-- **118 个数据源**：覆盖国内、国际、科技、财经等分类，包含 44 个「最热」源和 45 个「实时」源。
+- **119 个数据源**：覆盖国内、国际、科技、财经等分类，包含 44 个「最热」源和 46 个「实时」源。
 - **两种阅读模式**：卡片模式适合按来源浏览，瀑布流模式适合按时间线混排阅读。
 - **数据源自定义**：「最热」「实时」栏目可以自由勾选要展示的数据源。
 - **关注与搜索**：收藏常用数据源到「关注」，通过名称、标题或拼音快速搜索全部数据源。
 - **拖拽排序**：卡片顺序可拖动调整，刷新和重新进入后保持。
 - **响应式布局**：桌面多栏、移动端横向滑动，瀑布流自动切换 1–3 栏。
 - **代理支持**：通过 `HTTPS_PROXY` / `HTTP_PROXY` 访问需要代理的国际站点。
-- **本地缓存**：SQLite 缓存数据源结果，减少重复抓取并提升首屏速度。
+- **灵活缓存**：本地 / Docker 使用文件 SQLite，Vercel 可选 Turso/libSQL，减少重复抓取并提升首屏速度。
 - **深色/浅色模式**、**中英文界面**、**PWA 安装**。
 
 ## 界面与交互
@@ -80,7 +80,7 @@
 
 | 分类 | 代表数据源 |
 |------|------------|
-| 国内 | 微博、知乎、抖音、小红书、B 站、百度、今日头条、贴吧、豆瓣、中新网、时代周报 |
+| 国内 | 微博、知乎、抖音、小红书、B 站、百度、今日头条、贴吧、豆瓣、中新网、时代周报、三联生活周刊 |
 | 国际 | BBC、The Guardian、纽约时报、WSJ、NHK、联合早报、中国数字时代、NPR、ABC News、France 24 |
 | 科技 | GitHub、Hacker News、Product Hunt、36 氪、少数派、掘金、PCbeta、酷安、钛媒体、雷峰网、The Verge、TechCrunch、Ars Technica、WIRED、CNET、ZDNet、GitHub Blog、Stack Overflow Blog、MIT Tech Review、IEEE Spectrum、JS Weekly、Python Weekly、Golang Weekly、Rust Weekly、Java Weekly |
 | 财经 | 财联社、雪球、华尔街见闻、证券时报、深潮 TechFlow、格隆汇、NGA大时代、经济观察报、MarketWatch、Seeking Alpha |
@@ -107,6 +107,7 @@
 - 每个数据源有 `interval` 刷新间隔；距离上次缓存小于 `interval` 时直接返回缓存。
 - 全局 `TTL` 为 30 分钟；带 `?latest` 可绕过 TTL，但不能绕过 `interval`。
 - 抓取失败时会优先回退到已有缓存。
+- 在 Vercel 上缓存通过 HTTP 存入 Turso/libSQL；本地和 Docker 仍使用文件 SQLite。
 
 ### 数据源稳定性
 
@@ -172,12 +173,16 @@ PORT=20193 pnpm start
 | `PORT` | 否 | 服务端口，默认 3000；示例使用 20193 |
 | `ENABLE_CACHE` | 否 | 是否启用 SQLite 缓存，默认启用；设为 `false` 关闭 |
 | `INIT_TABLE` | 否 | 是否在启动时初始化缓存表，默认启用；设为 `false` 跳过 |
+| `TURSO_DATABASE_URL` | 仅 Vercel | Turso/libSQL 地址，例如 `libsql://...turso.io`；构建时设置后 Nitro 会使用 HTTP 缓存而不是本地 SQLite |
+| `TURSO_AUTH_TOKEN` | 否 | Turso 鉴权 Token，私有数据库必须配置 |
 | `PRODUCTHUNT_API_TOKEN` | 否 | Product Hunt 数据源 Token，未配置时该源会抓取失败 |
 | `XHS_COOKIE` | 否 | 小红书 Web 回退接口 Cookie，必须包含 `web_session` |
 | `HTTPS_PROXY` | 否 | HTTPS 代理地址，例如 `http://127.0.0.1:7897` |
 | `HTTP_PROXY` | 否 | HTTP 代理地址，通常与 `HTTPS_PROXY` 相同 |
 
 > `example.env.server` 中的 `G_CLIENT_ID`、`G_CLIENT_SECRET`、`JWT_SECRET` 是历史 OAuth 配置占位，当前代码不再读取，可以留空。
+
+> Nitro 会在构建时序列化数据库配置。Turso 变量必须在 `pnpm build` / Vercel 构建前设置，修改后需要重新部署。
 
 ### 代理说明
 
@@ -216,6 +221,22 @@ docker compose up -d
 ### CI 镜像
 
 `.github/workflows/docker.yml` 会在推送 `main` 分支或 `v*` 标签时构建并推送 `linux/amd64` 镜像到 GHCR。构建在 `ubuntu-24.04` 上原生运行，设置 60 分钟超时和按分支分组的并发控制，旧任务不会一直占用构建资源。
+
+### Vercel + Turso
+
+1. 创建 Turso 数据库和访问 Token。可以手动初始化一次缓存表，然后在 Vercel 设置 `INIT_TABLE=false`：
+   ```sql
+   CREATE TABLE IF NOT EXISTS cache (
+     id TEXT PRIMARY KEY,
+     updated INTEGER,
+     data TEXT
+   );
+   ```
+2. 在 Vercel 项目设置中添加 `TURSO_DATABASE_URL`（例如 `libsql://<db>-<org>.turso.io`）和 `TURSO_AUTH_TOKEN`。
+3. 构建命令使用 `pnpm build`。Vercel 构建会自动识别并生成 `.vercel/output`；也可以显式设置 `BUILD_PRESET=vercel` 或 `NITRO_PRESET=vercel`。
+4. 修改任一 Turso 变量后需要重新部署，因为 Nitro 会在构建时把数据库选项写入服务端产物。
+
+本地和 Docker 部署不需要配置 Turso 变量，仍使用 `.data` 下的 SQLite 文件。
 
 ## 开发
 

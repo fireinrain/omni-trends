@@ -883,6 +883,15 @@ export const originSources = {
     interval: Time.Common,
     home: "http://www.time-weekly.com",
   },
+  "lifeweek": {
+    name: "三联生活周刊",
+    title: "最新文章",
+    color: "red",
+    column: "china",
+    type: "realtime",
+    interval: Time.Common,
+    home: "https://www.lifeweek.com.cn",
+  },
 
   // ===== 英文科技媒体 =====
   "theverge": {

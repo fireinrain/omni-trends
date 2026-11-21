@@ -20,7 +20,11 @@ export default defineEventHandler(async (event): Promise<SourceResponse> => {
     const now = Date.now()
     let cache: CacheInfo | undefined
     if (cacheTable) {
-      cache = await cacheTable.get(id)
+      try {
+        cache = await cacheTable.get(id)
+      } catch (e) {
+        logger.error("failed to get cache", e)
+      }
       if (cache) {
         // interval 刷新间隔，对于缓存失效也要执行的。本质上表示本来内容更新就很慢，这个间隔内可能内容压根不会更新。
         // 默认 10 分钟，是低于 TTL 的，但部分 Source 的更新间隔会超过 TTL，甚至有的一天更新一次。
@@ -51,7 +55,11 @@ export default defineEventHandler(async (event): Promise<SourceResponse> => {
     try {
       const newData = (await getters[id]()).slice(0, 30)
       if (cacheTable && newData.length) {
-        await cacheTable.set(id, newData)
+        try {
+          await cacheTable.set(id, newData)
+        } catch (e) {
+          logger.error("failed to set cache", e)
+        }
       }
       logger.success(`fetch ${id} latest`)
       return {

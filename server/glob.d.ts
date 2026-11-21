@@ -43,6 +43,7 @@ declare module 'glob:./sources/{*.ts,**/index.ts}' {
   export const juejin: typeof import('./sources/juejin')
   export const kaopu: typeof import('./sources/kaopu')
   export const kuaishou: typeof import('./sources/kuaishou')
+  export const lifeweek: typeof import('./sources/lifeweek')
   export const linuxdo: typeof import('./sources/linuxdo')
   export const lol: typeof import('./sources/lol')
   export const media: typeof import('./sources/media')
