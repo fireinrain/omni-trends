@@ -12,7 +12,7 @@
 
 ## 核心特性
 
-- **100+ 个数据源**：覆盖国内、国际、科技、财经等分类，包含 49 个「最热」源和 24 个「实时」源。
+- **118 个数据源**：覆盖国内、国际、科技、财经等分类，包含 44 个「最热」源和 45 个「实时」源。
 - **两种阅读模式**：卡片模式适合按来源浏览，瀑布流模式适合按时间线混排阅读。
 - **数据源自定义**：「最热」「实时」栏目可以自由勾选要展示的数据源。
 - **关注与搜索**：收藏常用数据源到「关注」，通过名称、标题或拼音快速搜索全部数据源。
@@ -80,10 +80,10 @@
 
 | 分类 | 代表数据源 |
 |------|------------|
-| 国内 | 微博、知乎、抖音、小红书、B 站、百度、今日头条、贴吧、豆瓣 |
-| 国际 | BBC、The Guardian、纽约时报、WSJ、NHK、联合早报、中国数字时代 |
-| 科技 | GitHub、Hacker News、Product Hunt、36 氪、少数派、掘金、PCbeta、酷安 |
-| 财经 | 财联社、雪球、华尔街见闻、证券时报、深潮 TechFlow、格隆汇 |
+| 国内 | 微博、知乎、抖音、小红书、B 站、百度、今日头条、贴吧、豆瓣、中新网、时代周报 |
+| 国际 | BBC、The Guardian、纽约时报、WSJ、NHK、联合早报、中国数字时代、NPR、ABC News、France 24 |
+| 科技 | GitHub、Hacker News、Product Hunt、36 氪、少数派、掘金、PCbeta、酷安、钛媒体、雷峰网、The Verge、TechCrunch、Ars Technica、WIRED、CNET、ZDNet、GitHub Blog、Stack Overflow Blog、MIT Tech Review、IEEE Spectrum、JS Weekly、Python Weekly、Golang Weekly、Rust Weekly、Java Weekly |
+| 财经 | 财联社、雪球、华尔街见闻、证券时报、深潮 TechFlow、格隆汇、NGA大时代、经济观察报、MarketWatch、Seeking Alpha |
 | 社区 | V2EX、NGA、NodeSeek、吾爱破解、水木社区、Linux.do（部分源暂不可用） |
 
 ### 抓取方式
@@ -293,15 +293,18 @@ docs/archive/           # 历史文档，仅作存档
 在 `shared/pre-sources.ts` 的 `originSources` 中新增条目：
 
 ```ts
-"example": {
-  name: "示例站点",
-  type: "realtime",        // 或 "hottest"
-  column: "tech",           // china / world / tech / finance
-  color: "blue",
-  interval: 10 * 60 * 1000,
-  home: "https://example.com",
-  desc: "示例数据源",
-},
+export const originSources = {
+  // ... 其他数据源
+  example: {
+    name: "示例站点",
+    type: "realtime", // 或 "hottest"
+    column: "tech", // china / world / tech / finance
+    color: "blue",
+    interval: 10 * 60 * 1000,
+    home: "https://example.com",
+    desc: "示例数据源",
+  },
+}
 ```
 
 常用字段：
@@ -425,7 +428,10 @@ sqlite3 .data/db.sqlite3 "DELETE FROM cache WHERE id='weibo';"
 这是 `unimport` 底层 `mlly` 的解析问题。单行写法：
 
 ```ts
+// 不要写成这样：
 export const toggleSourceVisibilityAtom = atom(null, (get, set, source: SourceID) => {
+  // ...
+})
 ```
 
 会被误判为导出了 `set`，从而生成不存在的自动导入。`src/atoms/index.ts` 中的写 atom 必须保持多行写法：

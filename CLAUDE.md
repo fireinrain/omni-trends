@@ -298,7 +298,10 @@ export default defineSource({
 `unimport` 底层的 `mlly` 会把单行写 atom 的参数误判为导出：
 
 ```ts
+// 单行写法（不要这样写）：
 export const toggleSourceVisibilityAtom = atom(null, (get, set, source: SourceID) => {
+  // ...
+})
 ```
 
 这会生成 `import { set } from "/src/atoms/index.ts"`，但该文件并没有导出 `set`，页面会白屏并报：

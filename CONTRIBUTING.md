@@ -28,15 +28,18 @@ git checkout -b add-example-source
 Add an entry to `originSources` in `shared/pre-sources.ts`:
 
 ```ts
-"example": {
-  name: "Example",
-  type: "realtime",        // or "hottest"
-  column: "tech",           // china / world / tech / finance
-  color: "blue",
-  interval: 10 * 60 * 1000,
-  home: "https://example.com",
-  desc: "Example source",
-},
+export const originSources = {
+  // ... other sources
+  example: {
+    name: "Example",
+    type: "realtime", // or "hottest"
+    column: "tech", // china / world / tech / finance
+    color: "blue",
+    interval: 10 * 60 * 1000,
+    home: "https://example.com",
+    desc: "Example source",
+  },
+}
 ```
 
 Useful fields:

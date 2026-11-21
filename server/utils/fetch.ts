@@ -22,6 +22,22 @@ const PROXY_DOMAINS = [
   "producthunt.com",
   "apnews.com",
   "chinadigitaltimes.net",
+  // 新增的中英文媒体（国际站点在配置代理时应走代理）
+  "theverge.com",
+  "techcrunch.com",
+  "arstechnica.com",
+  "wired.com",
+  "cnet.com",
+  "zdnet.com",
+  "github.blog",
+  "stackoverflow.blog",
+  "technologyreview.com",
+  "ieee.org",
+  "npr.org",
+  "marketwatch.com",
+  "abcnews.go.com",
+  "france24.com",
+  "seekingalpha.com",
 ]
 
 let proxyAgent: any = null

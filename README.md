@@ -12,7 +12,7 @@ A real-time trending-news aggregator that brings more than 100 sources together 
 
 ## Features
 
-- **100+ sources** across China, world, tech, and finance, including 49 "hottest" sources and 24 "realtime" sources.
+- **118 sources** across China, world, tech, and finance, including 44 "hottest" sources and 45 "realtime" sources.
 - **Two reading modes**: cards for source-by-source browsing, waterfall for a mixed timeline.
 - **Source customization**: choose which sources appear in the Hottest and Realtime columns.
 - **Focus and search**: star favorite sources, then search all sources by name, subtitle, or pinyin.
@@ -80,10 +80,10 @@ The project currently registers **107 source IDs** (including sub-sources), impl
 
 | Category | Representative sources |
 |----------|------------------------|
-| China | Weibo, Zhihu, Douyin, Xiaohongshu, Bilibili, Baidu, Toutiao, Tieba, Douban |
-| World | BBC, The Guardian, The New York Times, WSJ, NHK, Lianhe Zaobao, China Digital Times |
-| Tech | GitHub, Hacker News, Product Hunt, 36Kr, SSPAI, Juejin, PCbeta, Coolapk |
-| Finance | CLS, Xueqiu, Wallstreetcn, Securities Times, TechFlow, Gelonghui |
+| China | Weibo, Zhihu, Douyin, Xiaohongshu, Bilibili, Baidu, Toutiao, Tieba, Douban, China News, Time Weekly |
+| World | BBC, The Guardian, The New York Times, WSJ, NHK, Lianhe Zaobao, China Digital Times, NPR, ABC News, France 24 |
+| Tech | GitHub, Hacker News, Product Hunt, 36Kr, SSPAI, Juejin, PCbeta, Coolapk, TMTPost, Leiphone, The Verge, TechCrunch, Ars Technica, WIRED, CNET, ZDNet, GitHub Blog, Stack Overflow Blog, MIT Tech Review, IEEE Spectrum, JS Weekly, Python Weekly, Golang Weekly, Rust Weekly, Java Weekly |
+| Finance | CLS, Xueqiu, Wallstreetcn, Securities Times, TechFlow, Gelonghui, NGA大时代, EEO, MarketWatch, Seeking Alpha |
 | Communities | V2EX, NGA, NodeSeek, 52pojie, NewSMTH, Linux.do (some sources are unavailable) |
 
 ### Fetch strategies
@@ -293,15 +293,18 @@ docs/archive/           # Historical documents only
 Add an entry to `originSources` in `shared/pre-sources.ts`:
 
 ```ts
-"example": {
-  name: "Example",
-  type: "realtime",        // or "hottest"
-  column: "tech",           // china / world / tech / finance
-  color: "blue",
-  interval: 10 * 60 * 1000,
-  home: "https://example.com",
-  desc: "Example source",
-},
+export const originSources = {
+  // ... other sources
+  example: {
+    name: "Example",
+    type: "realtime", // or "hottest"
+    column: "tech", // china / world / tech / finance
+    color: "blue",
+    interval: 10 * 60 * 1000,
+    home: "https://example.com",
+    desc: "Example source",
+  },
+}
 ```
 
 Common fields:
@@ -425,7 +428,10 @@ sqlite3 .data/db.sqlite3 "DELETE FROM cache WHERE id='weibo';"
 This is an `mlly` parsing issue used by `unimport`. A single-line write atom such as:
 
 ```ts
+// Do not write it on one line like this:
 export const toggleSourceVisibilityAtom = atom(null, (get, set, source: SourceID) => {
+  // ...
+})
 ```
 
 is misread as exporting `set`, which generates an invalid auto-import. Keep write atoms in `src/atoms/index.ts` multiline:
