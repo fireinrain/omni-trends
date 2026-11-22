@@ -1,6 +1,6 @@
 services:
   omnitrends:
-    image: ghcr.io/fireinrain/omni-trends:0.0.42
+    image: ghcr.io/fireinrain/omni-trends:latest
     container_name: omnitrends
     ports:
       - '4444:4444'
