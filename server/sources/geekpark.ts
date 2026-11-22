@@ -1,35 +1,4 @@
-interface GeekparkPost {
-  id: string
-  title: string
-  abstract: string
-  authors?: {
-    nickname: string
-  }[]
-  published_timestamp: number
-}
+export const GEEKPARK_RSS_URL = "https://www.geekpark.net/rss"
 
-interface GeekparkItem {
-  post: GeekparkPost
-}
-
-interface GeekparkResponse {
-  homepage_posts: GeekparkItem[]
-}
-
-export default defineSource(async () => {
-  const url = "https://mainssl.geekpark.net/api/v2"
-  const res: GeekparkResponse = await myFetch(url)
-  return res.homepage_posts.map((v) => {
-    const post = v.post
-    return {
-      id: post.id,
-      title: post.title,
-      url: `https://www.geekpark.net/news/${post.id}`,
-      extra: {
-        info: post.authors?.[0]?.nickname,
-        hover: post.abstract,
-        date: post.published_timestamp,
-      },
-    }
-  })
-})
+/** 极客公园，改用官方 RSS。 */
+export default defineRSSSource(GEEKPARK_RSS_URL)

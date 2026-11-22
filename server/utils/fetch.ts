@@ -38,6 +38,9 @@ const PROXY_DOMAINS = [
   "abcnews.go.com",
   "france24.com",
   "seekingalpha.com",
+  "daringfireball.net",
+  "css-tricks.com",
+  "liumingye.cn",
 ]
 
 let proxyAgent: any = null

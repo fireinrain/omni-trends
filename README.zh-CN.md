@@ -12,7 +12,7 @@
 
 ## 核心特性
 
-- **119 个数据源**：覆盖国内、国际、科技、财经等分类，包含 44 个「最热」源和 46 个「实时」源。
+- **122 个数据源**：覆盖国内、国际、科技、财经等分类，包含 44 个「最热」源和 46 个「实时」源。
 - **两种阅读模式**：卡片模式适合按来源浏览，瀑布流模式适合按时间线混排阅读。
 - **数据源自定义**：「最热」「实时」栏目可以自由勾选要展示的数据源。
 - **关注与搜索**：收藏常用数据源到「关注」，通过名称、标题或拼音快速搜索全部数据源。
@@ -74,7 +74,7 @@
 
 ## 数据源
 
-当前项目注册了 **107 个数据源 ID**（含子源），抓取实现位于 `server/sources/`。数据源元信息集中定义在 `shared/pre-sources.ts`，运行时注册表由 `pnpm gen:sources` 生成。
+当前项目注册了 **110 个数据源 ID**（含子源），抓取实现位于 `server/sources/`。数据源元信息集中定义在 `shared/pre-sources.ts`，运行时注册表由 `pnpm gen:sources` 生成。
 
 ### 分类概览
 
@@ -82,7 +82,7 @@
 |------|------------|
 | 国内 | 微博、知乎、抖音、小红书、B 站、百度、今日头条、贴吧、豆瓣、中新网、时代周报、三联生活周刊 |
 | 国际 | BBC、The Guardian、纽约时报、WSJ、NHK、联合早报、中国数字时代、NPR、ABC News、France 24 |
-| 科技 | GitHub、Hacker News、Product Hunt、36 氪、少数派、掘金、PCbeta、酷安、钛媒体、雷峰网、The Verge、TechCrunch、Ars Technica、WIRED、CNET、ZDNet、GitHub Blog、Stack Overflow Blog、MIT Tech Review、IEEE Spectrum、JS Weekly、Python Weekly、Golang Weekly、Rust Weekly、Java Weekly |
+| 科技 | GitHub、Hacker News、Product Hunt、36 氪、IT之家、爱范儿、极客公园、少数派、掘金、PCbeta、酷安、钛媒体、雷峰网、The Verge、TechCrunch、Ars Technica、WIRED、Daring Fireball、CSS-Tricks、CNET、ZDNet、GitHub Blog、Stack Overflow Blog、MIT Tech Review、IEEE Spectrum、JS Weekly、Python Weekly、Golang Weekly、Rust Weekly、Java Weekly |
 | 财经 | 财联社、雪球、华尔街见闻、证券时报、深潮 TechFlow、格隆汇、NGA大时代、经济观察报、MarketWatch、Seeking Alpha |
 | 社区 | V2EX、NGA、NodeSeek、吾爱破解、水木社区、Linux.do（部分源暂不可用） |
 
@@ -116,6 +116,10 @@
 - **财联社（CLS）**：使用官网接口签名请求。
 - **PCbeta**：处理论坛的环境校验和滑块校验 Cookie。
 - **联合早报**：使用 `zaobao/realtime/world` RSS 源，避开官网的地区跳转。
+- **IT之家 / 爱范儿 / 极客公园**：由 HTML/私有接口改用官方 RSS。
+- **Daring Fireball / CSS-Tricks**：使用官方 RSS。
+- **LINUX DO 热门话题**：使用 `linuxdorss.longpink.com/top.xml` 的 RSS 镜像（旧的 `linuxdo` 源保持禁用）。
+- **HelloGitHub 精选项目**：通过公共 RSSHub 实例使用 `hellogithub/home` 路由。
 - **深潮 TechFlow**：使用官方 RSS。
 - **开源中国**：使用官方 RSS。
 - **SegmentFault**：使用官方 Atom feed。

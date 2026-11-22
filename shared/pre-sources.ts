@@ -196,6 +196,14 @@ export const originSources = {
       },
     },
   },
+  "linuxdo-top": {
+    name: "LINUX DO",
+    title: "热门话题",
+    column: "tech",
+    color: "slate",
+    interval: Time.Common,
+    home: "https://linux.do/top",
+  },
   "producthunt": {
     name: "Product Hunt",
     color: "red",
@@ -542,6 +550,20 @@ export const originSources = {
     color: "purple",
     home: "https://www.geekpark.net",
   },
+  "csstricks": {
+    name: "CSS-Tricks",
+    column: "tech",
+    color: "blue",
+    interval: Time.Common,
+    home: "https://css-tricks.com",
+  },
+  "daringfireball": {
+    name: "Daring Fireball",
+    column: "tech",
+    color: "orange",
+    interval: Time.Common,
+    home: "https://daringfireball.net",
+  },
   "nytimes": {
     name: "纽约时报",
     column: "world",
@@ -557,11 +579,12 @@ export const originSources = {
       },
     },
   },
-  "hellogithub": {
+  "hellogithub-featured": {
     name: "HelloGitHub",
+    title: "精选项目",
     column: "tech",
     color: "green",
-    home: "https://hellogithub.com",
+    home: "https://hellogithub.com/?sort_by=featured",
   },
   "nodeseek": {
     name: "NodeSeek",
