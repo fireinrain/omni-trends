@@ -200,6 +200,7 @@ export const originSources = {
     name: "LINUX DO",
     title: "热门话题",
     column: "tech",
+    type: "realtime",
     color: "slate",
     interval: Time.Common,
     home: "https://linux.do/top",

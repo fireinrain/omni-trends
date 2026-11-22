@@ -52,6 +52,10 @@ describe("新增源的元数据与图标", () => {
     })
   }
 
+  it("linuxdo-top 归入实时栏目", () => {
+    expect(sources["linuxdo-top"].type).toBe("realtime")
+  })
+
   it("原有禁用源 linuxdo 保持禁用", () => {
     expect(sources.linuxdo).toBeUndefined()
   })

@@ -12,7 +12,7 @@ A real-time trending-news aggregator that brings more than 100 sources together 
 
 ## Features
 
-- **122 sources** across China, world, tech, and finance, including 44 "hottest" sources and 46 "realtime" sources.
+- **122 sources** across China, world, tech, and finance, including 44 "hottest" sources and 47 "realtime" sources.
 - **Two reading modes**: cards for source-by-source browsing, waterfall for a mixed timeline.
 - **Source customization**: choose which sources appear in the Hottest and Realtime columns.
 - **Focus and search**: star favorite sources, then search all sources by name, subtitle, or pinyin.
