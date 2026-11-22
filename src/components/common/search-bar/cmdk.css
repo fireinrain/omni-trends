@@ -27,21 +27,19 @@
 }
 
 [cmdk-dialog] {
-    --at-apply: bg-base sprinkle-primary bg-op-97 backdrop-blur-5 shadow pb-4 rounded-2xl shadow-2xl relative outline-none;
+    --at-apply: bg-base sprinkle-primary bg-op-97 backdrop-blur-5 shadow pb-4 rounded-2xl shadow-2xl outline-none;
+    /* Safari 会丢弃单位混用的 translate(round(-50%, 1px))，导致弹窗左上角停在视口中心。
+       改用 inset + margin: auto 做居中，不依赖 transform，兼容性更稳。 */
     position: fixed;
-    width: 80vw ;
+    inset: 0;
+    width: 80vw;
     max-width: 675px;
+    height: fit-content;
+    max-height: calc(100vh - 2rem);
+    margin: auto;
     z-index: 999;
-    left: 50%;
-    top: 50%;
-    /* transform: translateX(-50%) translateY(-50%); */
-    transform: translate(round(-50%, 1px), round(-50%, 1px));
-}
-
-[cmdk-dialog] {
     transition: opacity;
-    transform-origin: center center;
-    animation: dialogIn 0.3s forwards
+    animation: dialogIn 0.3s forwards;
 }
 
 [cmdk-dialog][data-state=closed]{
