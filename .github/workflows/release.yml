@@ -2,7 +2,8 @@ name: Release
 
 on:
   push:
-    branch: dev
+    branches:
+      - dev
     tags:
       - 'v*'
 
