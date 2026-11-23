@@ -83,7 +83,7 @@
 | 国内 | 微博、知乎、抖音、小红书、B 站、百度、今日头条、贴吧、豆瓣、中新网、时代周报、三联生活周刊 |
 | 国际 | BBC、The Guardian、纽约时报、WSJ、NHK、联合早报、中国数字时代、NPR、ABC News、France 24 |
 | 科技 | GitHub、Hacker News、Product Hunt、36 氪、IT之家、爱范儿、极客公园、少数派、掘金、PCbeta、酷安、钛媒体、雷峰网、The Verge、TechCrunch、Ars Technica、WIRED、Daring Fireball、CSS-Tricks、CNET、ZDNet、GitHub Blog、Stack Overflow Blog、MIT Tech Review、IEEE Spectrum、JS Weekly、Python Weekly、Golang Weekly、Rust Weekly、Java Weekly |
-| 财经 | 财联社、雪球、华尔街见闻、证券时报、深潮 TechFlow、格隆汇、NGA大时代、经济观察报、MarketWatch、Seeking Alpha |
+| 财经 | 财联社、雪球、华尔街见闻、证券时报、深潮 TechFlow、格隆汇、NGA大时代、虎扑股票区、经济观察报、MarketWatch、Seeking Alpha |
 | 社区 | V2EX、NGA、NodeSeek、吾爱破解、水木社区、Linux.do（部分源暂不可用） |
 
 ### 抓取方式

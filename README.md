@@ -83,7 +83,7 @@ The project currently registers **110 source IDs** (including sub-sources), impl
 | China | Weibo, Zhihu, Douyin, Xiaohongshu, Bilibili, Baidu, Toutiao, Tieba, Douban, China News, Time Weekly, SanLian LifeWeek |
 | World | BBC, The Guardian, The New York Times, WSJ, NHK, Lianhe Zaobao, China Digital Times, NPR, ABC News, France 24 |
 | Tech | GitHub, Hacker News, Product Hunt, 36Kr, IT Home, iFanr, GeekPark, SSPAI, Juejin, PCbeta, Coolapk, TMTPost, Leiphone, The Verge, TechCrunch, Ars Technica, WIRED, Daring Fireball, CSS-Tricks, CNET, ZDNet, GitHub Blog, Stack Overflow Blog, MIT Tech Review, IEEE Spectrum, JS Weekly, Python Weekly, Golang Weekly, Rust Weekly, Java Weekly |
-| Finance | CLS, Xueqiu, Wallstreetcn, Securities Times, TechFlow, Gelonghui, NGA大时代, EEO, MarketWatch, Seeking Alpha |
+| Finance | CLS, Xueqiu, Wallstreetcn, Securities Times, TechFlow, Gelonghui, NGA大时代, 虎扑股票区, EEO, MarketWatch, Seeking Alpha |
 | Communities | V2EX, NGA, NodeSeek, 52pojie, NewSMTH, Linux.do (some sources are unavailable) |
 
 ### Fetch strategies

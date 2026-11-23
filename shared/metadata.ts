@@ -82,6 +82,7 @@ export const hottestOrderZh: SourceID[] = [
   "segmentfault",
   "ngabbs",
   "ngabbs-big-era",
+  "hupu-stock",
   "coolapk",
   "pcbeta",
   "52pojie",
@@ -135,6 +136,7 @@ export const hottestOrderEn: SourceID[] = [
   "coolapk",
   "ngabbs",
   "ngabbs-big-era",
+  "hupu-stock",
   "freebuf",
   // Finance
   "xueqiu",

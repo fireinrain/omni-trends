@@ -101,6 +101,15 @@ export const originSources = {
     type: "hottest",
     color: "red",
   },
+  "hupu-stock": {
+    name: "虎扑股票区",
+    title: "24小时热帖",
+    type: "hottest",
+    column: "finance",
+    color: "red",
+    home: "https://bbs.hupu.com/stock",
+    desc: "虎扑股票区 24 小时热帖榜",
+  },
   "tieba": {
     name: "百度贴吧",
     title: "热议",
