@@ -34,23 +34,6 @@ function GoTop() {
   )
 }
 
-function Afdian() {
-  return (
-    <a
-      href="https://afdian.com/a/tutoupower"
-      target="_blank"
-      rel="noopener noreferrer"
-      title="去爱发电支持作者"
-    >
-      <img
-        src={`${import.meta.env.BASE_URL}ai_fa_dian.jpg`}
-        alt="爱发电"
-        className="h-6 w-6 rounded-full object-cover cursor-pointer btn"
-      />
-    </a>
-  )
-}
-
 function Github() {
   return (
     <button type="button" title="Github" className="i-ph:github-logo-duotone btn" onClick={() => window.open(Homepage)} />
@@ -105,7 +88,6 @@ export function Header() {
         <SourceFilter />
         <Refresh />
         <Github />
-        <Afdian />
         <LangToggle />
         <Menu />
       </span>
